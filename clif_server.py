@@ -384,6 +384,10 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             result = "CLIF DATA CONTEXT\n"
             result += "=" * 50 + "\n\n"
             
+            # Add CLIF explanation
+            result += "CLIF stands for Common Longitudinal ICU Format - a standardized data format\n"
+            result += "for intensive care unit patient data that enables multi-site clinical research.\n\n"
+            
             # Available tables
             result += "AVAILABLE TABLES:\n"
             for table in clif_server.data_explorer.tables:
