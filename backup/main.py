@@ -10,14 +10,15 @@ import pandas as pd
 import os
 from pathlib import Path
 
-from mcp import Server, Tool
-from mcp.types import TextContent, ToolResult
+from mcp.server import Server
+from mcp.types import Tool, TextContent, ToolResult
 
 from .tools.cohort_builder import CohortBuilder
 from .tools.outcomes_analyzer import OutcomesAnalyzer
 from .tools.code_generator import CodeGenerator
 from .tools.data_explorer import DataExplorer
 from .tools.ml_model_builder import MLModelBuilder
+from .tools.comprehensive_dictionary import ComprehensiveDictionary
 from .security.privacy_guard import PrivacyGuard
 
 # Configure logging
@@ -37,6 +38,7 @@ class CLIFServer:
         self.code_generator = CodeGenerator()
         self.data_explorer = DataExplorer(data_path)
         self.ml_model_builder = MLModelBuilder(data_path)
+        self.comprehensive_dictionary = ComprehensiveDictionary(data_path)
         
         # Register MCP tools
         self._register_tools()
@@ -44,22 +46,23 @@ class CLIFServer:
     def _register_tools(self):
         """Register all available MCP tools"""
         
-        @self.server.tool()
-        async def explore_schema() -> List[Tool]:
-            """Explore CLIF dataset schema and summary statistics"""
-            return Tool(
-                name="explore_schema",
-                description="Explore CLIF tables, columns, and data quality metrics",
-                input_schema={
-                    "type": "object",
-                    "properties": {
-                        "table_name": {
-                            "type": "string",
-                            "description": "Specific table to explore (optional)"
-                        }
+        @self.server.tool(
+            name="explore_schema",
+            description="Explore CLIF tables, columns, and data quality metrics",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "table_name": {
+                        "type": "string",
+                        "description": "Specific table to explore (optional)"
                     }
                 }
-            )
+            }
+        )
+        async def explore_schema(table_name: Optional[str] = None) -> str:
+            """Explore CLIF dataset schema and summary statistics"""
+            result = self.data_explorer.explore_schema(table_name)
+            return self.privacy_guard.sanitize_output(result)
         
         @self.server.tool()
         async def build_cohort() -> List[Tool]:

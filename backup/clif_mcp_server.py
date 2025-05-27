@@ -22,6 +22,8 @@ from server.tools.data_explorer import DataExplorer
 from server.tools.cohort_builder import CohortBuilder
 from server.tools.outcomes_analyzer import OutcomesAnalyzer
 from server.tools.code_generator import CodeGenerator
+from server.tools.ml_model_builder import MLModelBuilder
+from server.tools.comprehensive_dictionary import ComprehensiveDictionary
 
 # Load CLIF data dictionary from JSON file
 def load_data_dictionary():
@@ -275,6 +277,46 @@ AVAILABLE VARIABLES: {', '.join(['age_at_admission', 'sex', 'race', 'mortality',
                     }
                 },
                 "required": ["language"]
+            }
+        ),
+        Tool(
+            name="build_ml_model",
+            description="Build flexible machine learning models for clinical prediction",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "outcome": {
+                        "type": "string",
+                        "description": "Target variable to predict (e.g., mortality, los_days)"
+                    },
+                    "features": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "List of feature columns to use for prediction"
+                    },
+                    "model_type": {
+                        "type": "string",
+                        "description": "Model type (auto, logistic_regression, random_forest, gradient_boosting, etc.)",
+                        "default": "auto"
+                    },
+                    "feature_selection": {
+                        "type": "object",
+                        "properties": {
+                            "method": {
+                                "type": "string",
+                                "enum": ["kbest", "mutual_info", "rfe"]
+                            },
+                            "n_features": {"type": "integer"}
+                        },
+                        "description": "Optional feature selection configuration"
+                    },
+                    "validation_split": {
+                        "type": "number",
+                        "default": 0.2,
+                        "description": "Test set proportion (0-1)"
+                    }
+                },
+                "required": ["outcome", "features"]
             }
         )
     ]
@@ -1023,6 +1065,67 @@ summary(model)
             
             return [TextContent(type="text", text=result)]
             
+        elif name == "build_ml_model":
+            outcome = arguments["outcome"]
+            features = arguments["features"]
+            model_type = arguments.get("model_type", "auto")
+            feature_selection = arguments.get("feature_selection")
+            validation_split = arguments.get("validation_split", 0.2)
+            
+            # Load data
+            if current_cohort is not None:
+                # Use current cohort
+                df = current_cohort
+            else:
+                # Load default data
+                patient_df = pd.read_csv(Path(data_explorer.data_path) / "patient.csv")
+                hosp_df = pd.read_csv(Path(data_explorer.data_path) / "hospitalization.csv")
+                df = patient_df.merge(hosp_df, on="patient_id")
+                
+                # Add derived outcomes if needed
+                if outcome == "mortality" and "mortality" not in df.columns:
+                    df["mortality"] = (df["discharge_disposition"] == "Expired").astype(int)
+                if outcome == "los_days" and "los_days" not in df.columns:
+                    df["admission_dttm"] = pd.to_datetime(df["admission_dttm"])
+                    df["discharge_dttm"] = pd.to_datetime(df["discharge_dttm"])
+                    df["los_days"] = (df["discharge_dttm"] - df["admission_dttm"]).dt.total_seconds() / 86400
+            
+            # Build model
+            result = ml_model_builder.build_model(
+                df=df,
+                outcome=outcome,
+                features=features,
+                model_type=model_type,
+                feature_selection=feature_selection,
+                validation_split=validation_split,
+                hyperparameter_tuning=False  # Disable for speed in MCP
+            )
+            
+            # Format results
+            output = f"""ML Model Built Successfully!
+Model ID: {result['model_id']}
+Model Type: {result['model_type']}
+Task: {result['task']}
+Samples: {result['n_samples']}
+Features: {result['n_features']}
+
+Performance Metrics:
+Training:
+"""
+            for metric, value in result['performance']['train'].items():
+                output += f"  - {metric}: {value:.3f}\n"
+            
+            output += "\nTest:"
+            for metric, value in result['performance']['test'].items():
+                output += f"  - {metric}: {value:.3f}\n"
+            
+            if result.get('feature_importance'):
+                output += "\nTop Feature Importance:"
+                for i, (feat, imp) in enumerate(list(result['feature_importance'].items())[:10]):
+                    output += f"\n  {i+1}. {feat}: {imp:.3f}"
+            
+            return [TextContent(type="text", text=output)]
+            
         else:
             return [TextContent(type="text", text=f"Unknown tool: {name}")]
             
@@ -1034,7 +1137,7 @@ summary(model)
 
 async def main():
     """Main entry point"""
-    global data_explorer, cohort_builder, outcomes_analyzer, code_generator
+    global data_explorer, cohort_builder, outcomes_analyzer, code_generator, ml_model_builder, comprehensive_dictionary
     
     # Parse arguments
     parser = argparse.ArgumentParser(description="CLIF MCP Server")
@@ -1049,6 +1152,8 @@ async def main():
         cohort_builder = CohortBuilder(args.data_path)
         outcomes_analyzer = OutcomesAnalyzer(args.data_path)
         code_generator = CodeGenerator()
+        ml_model_builder = MLModelBuilder(args.data_path)
+        comprehensive_dictionary = ComprehensiveDictionary(args.data_path)
         
         # Build data dictionary on startup
         build_data_dictionary()

@@ -47,6 +47,16 @@ class CodeGenerator:
         else:
             raise ValueError(f"Unsupported language: {language}")
     
+    def generate_regression_code(self, config: Dict[str, Any], language: str = 'python') -> str:
+        """Generate regression analysis code"""
+        
+        if language == 'python':
+            return self._generate_python_regression(config)
+        elif language == 'r':
+            return self._generate_r_regression(config)
+        else:
+            raise ValueError(f"Unsupported language: {language}")
+    
     def _generate_python_code(self, analysis_type: str, 
                              include_visualizations: bool) -> str:
         """Generate Python analysis script"""
@@ -635,3 +645,129 @@ class CodeGenerator:
         ''')
         
         return script
+    
+    def _generate_python_regression(self, config: Dict[str, Any]) -> str:
+        """Generate Python code for regression analysis"""
+        
+        outcome = config['outcome']
+        predictors = config['predictors']
+        model_type = config['model_type']
+        interaction_terms = config.get('interaction_terms', [])
+        
+        code = f"""
+# Regression Analysis: {model_type.title()} Model
+# Outcome: {outcome}
+# Predictors: {', '.join(predictors)}
+
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+
+# Prepare data
+predictors = {predictors}
+df_model = cohort[predictors + ['{outcome}']].dropna()
+
+X = df_model[predictors]
+y = df_model['{outcome}']
+"""
+        
+        if interaction_terms:
+            code += f"""
+# Add interaction terms
+interaction_terms = {interaction_terms}
+for term in interaction_terms:
+    if '*' in term:
+        parts = term.split('*')
+        df_model[term] = df_model[parts[0].strip()] * df_model[parts[1].strip()]
+        X[term] = df_model[term]
+"""
+        
+        if model_type == 'linear':
+            code += """
+# Fit linear regression
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+
+model = LinearRegression()
+model.fit(X, y)
+
+# Results
+print("Linear Regression Results")
+print("=" * 40)
+print(f"R-squared: {r2_score(y, model.predict(X)):.4f}")
+print("\\nCoefficients:")
+for pred, coef in zip(X.columns, model.coef_):
+    print(f"  {pred}: {coef:.4f}")
+print(f"  Intercept: {model.intercept_:.4f}")
+"""
+        
+        elif model_type == 'logistic':
+            code += """
+# Fit logistic regression
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score, classification_report
+
+model = LogisticRegression(max_iter=1000)
+model.fit(X, y)
+
+# Results
+y_pred_proba = model.predict_proba(X)[:, 1]
+print("Logistic Regression Results")
+print("=" * 40)
+print(f"AUC: {roc_auc_score(y, y_pred_proba):.4f}")
+print("\\nCoefficients (log odds):")
+for pred, coef in zip(X.columns, model.coef_[0]):
+    print(f"  {pred}: {coef:.4f} (OR: {np.exp(coef):.2f})")
+print(f"  Intercept: {model.intercept_[0]:.4f}")
+"""
+        
+        return code
+    
+    def _generate_r_regression(self, config: Dict[str, Any]) -> str:
+        """Generate R code for regression analysis"""
+        
+        outcome = config['outcome']
+        predictors = config['predictors']
+        model_type = config['model_type']
+        
+        formula = f"{outcome} ~ " + " + ".join(predictors)
+        
+        if config.get('interaction_terms'):
+            for term in config['interaction_terms']:
+                formula += f" + {term}"
+        
+        code = f"""
+# Regression Analysis: {model_type.title()} Model
+# Formula: {formula}
+"""
+        
+        if model_type == 'linear':
+            code += f"""
+# Fit linear model
+model <- lm({formula}, data = cohort)
+summary(model)
+
+# Diagnostics
+par(mfrow = c(2, 2))
+plot(model)
+"""
+        
+        elif model_type == 'logistic':
+            code += f"""
+# Fit logistic regression
+model <- glm({formula}, data = cohort, family = binomial())
+summary(model)
+
+# Odds ratios
+exp(coef(model))
+"""
+        
+        elif model_type == 'cox':
+            code += f"""
+# Fit Cox proportional hazards model
+library(survival)
+model <- coxph(Surv(los_days, {outcome}) ~ {' + '.join(predictors)}, data = cohort)
+summary(model)
+"""
+        
+        return code
