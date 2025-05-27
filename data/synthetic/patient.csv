@@ -1,0 +1,1001 @@
+patient_id,race,ethnicity,sex,date_of_birth
+PT000001,White,Unknown,Female,1979-04-08
+PT000002,White,Not Hispanic or Latino,Male,1931-05-06
+PT000003,White,Hispanic or Latino,Female,1950-11-05
+PT000004,Black or African American,Not Hispanic or Latino,Female,1946-10-21
+PT000005,Asian,Not Hispanic or Latino,Male,1986-11-02
+PT000006,White,Not Hispanic or Latino,Male,1982-03-05
+PT000007,White,Not Hispanic or Latino,Female,1998-12-25
+PT000008,White,Not Hispanic or Latino,Male,1936-03-04
+PT000009,White,Hispanic or Latino,Male,1962-04-21
+PT000010,White,Not Hispanic or Latino,Male,1931-09-19
+PT000011,Black or African American,Not Hispanic or Latino,Male,1946-06-12
+PT000012,Other,Unknown,Female,1968-10-23
+PT000013,White,Not Hispanic or Latino,Female,1931-06-18
+PT000014,White,Not Hispanic or Latino,Male,1944-11-25
+PT000015,White,Hispanic or Latino,Male,1980-01-31
+PT000016,Black or African American,Not Hispanic or Latino,Male,1971-11-24
+PT000017,White,Not Hispanic or Latino,Female,1946-08-03
+PT000018,Asian,Hispanic or Latino,Female,1975-05-10
+PT000019,White,Hispanic or Latino,Male,1992-07-11
+PT000020,White,Not Hispanic or Latino,Male,1929-11-25
+PT000021,White,Not Hispanic or Latino,Female,1992-03-30
+PT000022,White,Not Hispanic or Latino,Male,1983-11-06
+PT000023,White,Hispanic or Latino,Male,1955-12-07
+PT000024,Unknown,Hispanic or Latino,Male,1941-07-09
+PT000025,White,Hispanic or Latino,Female,2004-01-21
+PT000026,Black or African American,Hispanic or Latino,Male,1955-08-25
+PT000027,White,Not Hispanic or Latino,Female,1936-08-17
+PT000028,Black or African American,Not Hispanic or Latino,Male,1936-12-08
+PT000029,White,Not Hispanic or Latino,Female,1995-07-01
+PT000030,Black or African American,Hispanic or Latino,Male,1976-06-25
+PT000031,White,Hispanic or Latino,Female,1992-05-07
+PT000032,White,Hispanic or Latino,Male,1986-04-24
+PT000033,White,Not Hispanic or Latino,Male,1971-03-21
+PT000034,White,Not Hispanic or Latino,Female,2005-04-18
+PT000035,White,Not Hispanic or Latino,Female,1958-12-02
+PT000036,White,Not Hispanic or Latino,Female,1972-06-14
+PT000037,White,Not Hispanic or Latino,Male,1994-01-31
+PT000038,White,Hispanic or Latino,Female,1977-08-21
+PT000039,Black or African American,Hispanic or Latino,Female,1996-08-09
+PT000040,White,Hispanic or Latino,Male,1974-06-05
+PT000041,Asian,Hispanic or Latino,Male,1984-05-07
+PT000042,White,Not Hispanic or Latino,Male,1932-12-19
+PT000043,Asian,Hispanic or Latino,Male,1947-03-03
+PT000044,White,Not Hispanic or Latino,Male,1951-12-19
+PT000045,White,Not Hispanic or Latino,Female,1935-08-14
+PT000046,White,Not Hispanic or Latino,Female,1947-07-20
+PT000047,White,Unknown,Female,1937-04-09
+PT000048,White,Not Hispanic or Latino,Male,1951-01-28
+PT000049,White,Not Hispanic or Latino,Female,1978-12-23
+PT000050,White,Not Hispanic or Latino,Male,1957-11-06
+PT000051,Other,Not Hispanic or Latino,Male,1958-04-08
+PT000052,White,Unknown,Male,1945-09-25
+PT000053,Black or African American,Hispanic or Latino,Male,1950-03-20
+PT000054,Black or African American,Not Hispanic or Latino,Female,2002-06-14
+PT000055,Black or African American,Not Hispanic or Latino,Male,1979-12-09
+PT000056,Asian,Not Hispanic or Latino,Male,1976-11-26
+PT000057,White,Not Hispanic or Latino,Female,1942-09-28
+PT000058,White,Not Hispanic or Latino,Male,1986-04-07
+PT000059,Black or African American,Not Hispanic or Latino,Female,1942-02-20
+PT000060,White,Hispanic or Latino,Male,1958-12-28
+PT000061,White,Not Hispanic or Latino,Female,2006-07-29
+PT000062,Other,Not Hispanic or Latino,Female,1979-04-24
+PT000063,Asian,Not Hispanic or Latino,Male,1972-10-31
+PT000064,White,Not Hispanic or Latino,Female,1982-10-16
+PT000065,Other,Not Hispanic or Latino,Male,1995-02-19
+PT000066,White,Hispanic or Latino,Female,1989-12-02
+PT000067,Other,Hispanic or Latino,Female,1947-04-05
+PT000068,White,Not Hispanic or Latino,Female,1931-11-24
+PT000069,Black or African American,Not Hispanic or Latino,Male,1953-12-30
+PT000070,Black or African American,Not Hispanic or Latino,Male,1950-04-11
+PT000071,White,Not Hispanic or Latino,Female,1945-11-06
+PT000072,White,Hispanic or Latino,Male,2002-12-09
+PT000073,White,Hispanic or Latino,Female,1997-09-30
+PT000074,Asian,Not Hispanic or Latino,Female,1953-12-08
+PT000075,White,Not Hispanic or Latino,Male,1980-07-07
+PT000076,White,Unknown,Male,1960-04-02
+PT000077,Other,Not Hispanic or Latino,Female,2000-09-22
+PT000078,White,Not Hispanic or Latino,Male,1965-03-08
+PT000079,White,Hispanic or Latino,Male,1950-01-20
+PT000080,White,Not Hispanic or Latino,Male,1948-08-18
+PT000081,Other,Unknown,Female,1973-03-06
+PT000082,White,Not Hispanic or Latino,Female,1949-11-20
+PT000083,White,Unknown,Female,1974-12-28
+PT000084,Other,Not Hispanic or Latino,Male,1999-06-04
+PT000085,Other,Not Hispanic or Latino,Male,1960-07-18
+PT000086,White,Hispanic or Latino,Female,1946-07-02
+PT000087,White,Not Hispanic or Latino,Female,2007-03-14
+PT000088,Unknown,Not Hispanic or Latino,Male,1969-02-18
+PT000089,Other,Hispanic or Latino,Female,1936-06-25
+PT000090,Black or African American,Not Hispanic or Latino,Male,1933-01-25
+PT000091,Asian,Hispanic or Latino,Female,1937-12-11
+PT000092,Other,Not Hispanic or Latino,Male,1978-05-02
+PT000093,Asian,Not Hispanic or Latino,Female,1991-03-05
+PT000094,Asian,Hispanic or Latino,Male,1962-04-27
+PT000095,White,Not Hispanic or Latino,Female,1934-05-07
+PT000096,White,Not Hispanic or Latino,Male,1959-02-27
+PT000097,White,Not Hispanic or Latino,Male,2007-02-02
+PT000098,White,Hispanic or Latino,Male,1970-08-30
+PT000099,White,Not Hispanic or Latino,Female,2005-02-19
+PT000100,White,Not Hispanic or Latino,Male,1996-07-13
+PT000101,White,Not Hispanic or Latino,Male,1930-04-16
+PT000102,Black or African American,Hispanic or Latino,Female,1985-08-10
+PT000103,White,Not Hispanic or Latino,Female,1982-07-26
+PT000104,White,Not Hispanic or Latino,Male,1971-04-11
+PT000105,White,Unknown,Female,1950-03-16
+PT000106,Black or African American,Not Hispanic or Latino,Male,1979-05-22
+PT000107,White,Not Hispanic or Latino,Male,1938-02-04
+PT000108,Black or African American,Not Hispanic or Latino,Male,1963-04-22
+PT000109,Unknown,Hispanic or Latino,Female,1964-10-13
+PT000110,Black or African American,Not Hispanic or Latino,Male,2003-10-16
+PT000111,White,Hispanic or Latino,Male,1997-09-16
+PT000112,White,Not Hispanic or Latino,Male,1949-12-08
+PT000113,Other,Hispanic or Latino,Male,1968-06-09
+PT000114,White,Not Hispanic or Latino,Male,1943-04-30
+PT000115,White,Not Hispanic or Latino,Male,2000-07-29
+PT000116,Black or African American,Not Hispanic or Latino,Male,1997-04-17
+PT000117,White,Not Hispanic or Latino,Male,1952-09-02
+PT000118,Other,Not Hispanic or Latino,Male,1979-03-26
+PT000119,White,Not Hispanic or Latino,Male,1976-11-21
+PT000120,White,Hispanic or Latino,Female,1941-04-25
+PT000121,White,Not Hispanic or Latino,Male,1988-11-13
+PT000122,White,Hispanic or Latino,Male,1971-06-19
+PT000123,Unknown,Hispanic or Latino,Male,1990-02-15
+PT000124,White,Not Hispanic or Latino,Male,1970-10-05
+PT000125,White,Not Hispanic or Latino,Male,1929-06-09
+PT000126,White,Hispanic or Latino,Male,1954-09-04
+PT000127,Asian,Not Hispanic or Latino,Male,1930-11-29
+PT000128,Black or African American,Not Hispanic or Latino,Female,2001-11-11
+PT000129,Black or African American,Hispanic or Latino,Male,1997-12-06
+PT000130,White,Hispanic or Latino,Female,1994-04-06
+PT000131,Unknown,Not Hispanic or Latino,Male,1953-05-18
+PT000132,Asian,Not Hispanic or Latino,Female,1933-11-29
+PT000133,Other,Not Hispanic or Latino,Female,1997-11-16
+PT000134,Asian,Not Hispanic or Latino,Female,2003-04-03
+PT000135,White,Hispanic or Latino,Male,1936-01-28
+PT000136,Other,Not Hispanic or Latino,Male,1967-04-20
+PT000137,Other,Not Hispanic or Latino,Male,1934-10-16
+PT000138,Unknown,Unknown,Female,1988-09-19
+PT000139,Black or African American,Not Hispanic or Latino,Male,1989-02-15
+PT000140,White,Not Hispanic or Latino,Female,1939-05-29
+PT000141,Asian,Hispanic or Latino,Male,1966-06-19
+PT000142,White,Not Hispanic or Latino,Male,1972-04-11
+PT000143,White,Hispanic or Latino,Male,1950-01-25
+PT000144,White,Not Hispanic or Latino,Female,1997-06-10
+PT000145,Black or African American,Not Hispanic or Latino,Male,1962-05-25
+PT000146,Black or African American,Not Hispanic or Latino,Female,1945-11-29
+PT000147,Black or African American,Not Hispanic or Latino,Male,1971-06-17
+PT000148,Unknown,Not Hispanic or Latino,Male,1986-04-30
+PT000149,Asian,Hispanic or Latino,Female,1945-01-30
+PT000150,Asian,Not Hispanic or Latino,Male,1953-09-15
+PT000151,Asian,Not Hispanic or Latino,Male,2007-01-05
+PT000152,Other,Not Hispanic or Latino,Male,1980-01-31
+PT000153,White,Not Hispanic or Latino,Male,1963-07-26
+PT000154,White,Not Hispanic or Latino,Female,1969-10-06
+PT000155,Black or African American,Not Hispanic or Latino,Female,1938-10-31
+PT000156,White,Not Hispanic or Latino,Female,1946-12-02
+PT000157,White,Unknown,Male,1955-10-06
+PT000158,Unknown,Not Hispanic or Latino,Female,1975-04-13
+PT000159,White,Unknown,Male,1947-05-05
+PT000160,White,Unknown,Male,1946-07-27
+PT000161,Black or African American,Not Hispanic or Latino,Male,1934-12-06
+PT000162,Black or African American,Not Hispanic or Latino,Female,1978-08-14
+PT000163,White,Not Hispanic or Latino,Female,1947-04-02
+PT000164,Other,Not Hispanic or Latino,Female,2000-01-06
+PT000165,White,Not Hispanic or Latino,Male,1996-06-11
+PT000166,White,Not Hispanic or Latino,Male,1934-12-02
+PT000167,Unknown,Unknown,Female,1947-12-16
+PT000168,White,Not Hispanic or Latino,Female,1981-07-28
+PT000169,Black or African American,Not Hispanic or Latino,Female,1946-02-07
+PT000170,Asian,Hispanic or Latino,Female,1939-09-18
+PT000171,Black or African American,Not Hispanic or Latino,Female,2002-05-12
+PT000172,Other,Not Hispanic or Latino,Male,1973-12-07
+PT000173,White,Hispanic or Latino,Female,1966-04-05
+PT000174,White,Not Hispanic or Latino,Male,1990-08-05
+PT000175,Unknown,Hispanic or Latino,Female,1992-05-17
+PT000176,White,Not Hispanic or Latino,Male,1944-03-30
+PT000177,White,Hispanic or Latino,Female,1936-12-14
+PT000178,Unknown,Unknown,Female,1963-01-06
+PT000179,Asian,Hispanic or Latino,Female,1962-06-07
+PT000180,White,Not Hispanic or Latino,Male,1965-10-27
+PT000181,Unknown,Not Hispanic or Latino,Male,1986-04-05
+PT000182,Black or African American,Not Hispanic or Latino,Male,1981-11-30
+PT000183,White,Not Hispanic or Latino,Male,2006-02-26
+PT000184,Asian,Not Hispanic or Latino,Female,1937-01-25
+PT000185,White,Not Hispanic or Latino,Female,1960-10-18
+PT000186,White,Not Hispanic or Latino,Male,1955-11-10
+PT000187,Asian,Not Hispanic or Latino,Female,1996-08-08
+PT000188,White,Not Hispanic or Latino,Male,1948-10-14
+PT000189,White,Not Hispanic or Latino,Male,1944-03-24
+PT000190,White,Hispanic or Latino,Male,1964-05-20
+PT000191,White,Hispanic or Latino,Male,1962-04-19
+PT000192,Black or African American,Hispanic or Latino,Female,1951-02-13
+PT000193,White,Hispanic or Latino,Male,1948-11-16
+PT000194,White,Not Hispanic or Latino,Female,2001-05-28
+PT000195,White,Not Hispanic or Latino,Female,1963-12-16
+PT000196,White,Not Hispanic or Latino,Male,1996-07-29
+PT000197,White,Not Hispanic or Latino,Male,1972-04-26
+PT000198,Black or African American,Not Hispanic or Latino,Male,1933-05-04
+PT000199,Other,Not Hispanic or Latino,Female,2007-05-03
+PT000200,White,Not Hispanic or Latino,Male,1994-08-08
+PT000201,White,Not Hispanic or Latino,Male,2004-12-21
+PT000202,White,Not Hispanic or Latino,Male,2001-08-25
+PT000203,White,Not Hispanic or Latino,Male,1995-08-04
+PT000204,Black or African American,Not Hispanic or Latino,Female,1942-05-14
+PT000205,Black or African American,Not Hispanic or Latino,Female,1967-04-10
+PT000206,Other,Not Hispanic or Latino,Male,1946-01-24
+PT000207,Asian,Hispanic or Latino,Male,1960-09-03
+PT000208,White,Not Hispanic or Latino,Male,1933-12-19
+PT000209,Black or African American,Not Hispanic or Latino,Male,1958-12-14
+PT000210,Black or African American,Not Hispanic or Latino,Male,2006-03-31
+PT000211,Black or African American,Hispanic or Latino,Male,1950-01-29
+PT000212,White,Not Hispanic or Latino,Male,1990-07-20
+PT000213,White,Not Hispanic or Latino,Male,1964-11-18
+PT000214,White,Not Hispanic or Latino,Male,1962-05-22
+PT000215,White,Not Hispanic or Latino,Male,2004-01-24
+PT000216,Other,Not Hispanic or Latino,Female,2007-01-13
+PT000217,Asian,Not Hispanic or Latino,Male,1972-09-28
+PT000218,White,Not Hispanic or Latino,Female,1985-06-05
+PT000219,White,Not Hispanic or Latino,Male,1941-06-20
+PT000220,White,Not Hispanic or Latino,Female,1952-07-14
+PT000221,White,Unknown,Female,2004-12-13
+PT000222,White,Not Hispanic or Latino,Male,1974-07-27
+PT000223,White,Not Hispanic or Latino,Male,1971-09-07
+PT000224,White,Not Hispanic or Latino,Female,1987-09-26
+PT000225,White,Not Hispanic or Latino,Male,1933-11-07
+PT000226,Unknown,Not Hispanic or Latino,Male,1974-12-16
+PT000227,Unknown,Hispanic or Latino,Female,1968-08-12
+PT000228,White,Not Hispanic or Latino,Female,1995-11-27
+PT000229,Other,Not Hispanic or Latino,Female,1941-09-03
+PT000230,White,Hispanic or Latino,Male,2004-05-01
+PT000231,White,Not Hispanic or Latino,Male,1935-08-23
+PT000232,White,Not Hispanic or Latino,Female,1943-11-20
+PT000233,White,Not Hispanic or Latino,Male,1975-10-21
+PT000234,White,Not Hispanic or Latino,Male,1982-01-22
+PT000235,White,Not Hispanic or Latino,Male,1947-09-27
+PT000236,Unknown,Not Hispanic or Latino,Female,1938-09-29
+PT000237,White,Not Hispanic or Latino,Female,1998-11-01
+PT000238,White,Not Hispanic or Latino,Male,1948-08-06
+PT000239,White,Hispanic or Latino,Female,1975-10-07
+PT000240,Unknown,Not Hispanic or Latino,Female,1977-09-14
+PT000241,Other,Not Hispanic or Latino,Male,1962-02-03
+PT000242,Black or African American,Not Hispanic or Latino,Female,1974-12-02
+PT000243,White,Hispanic or Latino,Male,1970-03-03
+PT000244,White,Not Hispanic or Latino,Female,2002-04-19
+PT000245,Black or African American,Not Hispanic or Latino,Male,1945-04-29
+PT000246,Other,Not Hispanic or Latino,Female,1985-04-03
+PT000247,White,Not Hispanic or Latino,Male,1948-01-04
+PT000248,White,Hispanic or Latino,Male,1960-04-06
+PT000249,White,Hispanic or Latino,Male,1981-10-13
+PT000250,White,Hispanic or Latino,Female,1952-10-16
+PT000251,White,Hispanic or Latino,Female,1954-01-20
+PT000252,White,Not Hispanic or Latino,Female,1988-01-14
+PT000253,Black or African American,Not Hispanic or Latino,Female,1935-01-19
+PT000254,Asian,Not Hispanic or Latino,Male,1965-02-20
+PT000255,White,Hispanic or Latino,Male,2007-04-09
+PT000256,White,Hispanic or Latino,Female,2007-02-01
+PT000257,White,Hispanic or Latino,Male,1935-02-09
+PT000258,Asian,Not Hispanic or Latino,Male,1946-01-07
+PT000259,Asian,Not Hispanic or Latino,Male,1950-01-29
+PT000260,Black or African American,Hispanic or Latino,Female,2002-03-09
+PT000261,Black or African American,Not Hispanic or Latino,Male,1998-02-05
+PT000262,White,Not Hispanic or Latino,Female,1997-12-22
+PT000263,White,Not Hispanic or Latino,Male,1958-03-20
+PT000264,Other,Not Hispanic or Latino,Female,1941-09-12
+PT000265,White,Not Hispanic or Latino,Male,1994-06-04
+PT000266,Other,Hispanic or Latino,Female,1984-04-08
+PT000267,Black or African American,Hispanic or Latino,Female,1977-02-07
+PT000268,White,Not Hispanic or Latino,Female,2006-05-25
+PT000269,White,Hispanic or Latino,Female,1980-05-27
+PT000270,Other,Not Hispanic or Latino,Male,1930-01-01
+PT000271,Unknown,Hispanic or Latino,Male,1993-02-15
+PT000272,Other,Hispanic or Latino,Male,1952-09-29
+PT000273,White,Not Hispanic or Latino,Male,1981-02-19
+PT000274,White,Hispanic or Latino,Male,2002-08-18
+PT000275,White,Not Hispanic or Latino,Male,1939-11-13
+PT000276,Other,Not Hispanic or Latino,Male,1938-05-25
+PT000277,Black or African American,Not Hispanic or Latino,Male,1937-09-28
+PT000278,White,Not Hispanic or Latino,Male,1972-07-17
+PT000279,White,Not Hispanic or Latino,Female,1950-08-20
+PT000280,White,Not Hispanic or Latino,Female,1976-07-26
+PT000281,White,Not Hispanic or Latino,Male,1985-05-14
+PT000282,Unknown,Not Hispanic or Latino,Male,1945-04-10
+PT000283,White,Unknown,Male,1978-11-11
+PT000284,White,Not Hispanic or Latino,Female,1949-12-25
+PT000285,White,Hispanic or Latino,Male,1967-07-01
+PT000286,White,Not Hispanic or Latino,Male,2000-01-04
+PT000287,White,Not Hispanic or Latino,Female,1995-05-22
+PT000288,White,Not Hispanic or Latino,Male,1936-08-04
+PT000289,White,Not Hispanic or Latino,Male,1962-06-07
+PT000290,White,Hispanic or Latino,Female,1950-12-22
+PT000291,White,Not Hispanic or Latino,Female,1929-09-02
+PT000292,White,Not Hispanic or Latino,Male,1989-07-16
+PT000293,Black or African American,Not Hispanic or Latino,Male,1979-02-01
+PT000294,White,Not Hispanic or Latino,Female,1949-10-28
+PT000295,White,Not Hispanic or Latino,Female,1987-03-17
+PT000296,White,Not Hispanic or Latino,Male,1972-06-03
+PT000297,White,Not Hispanic or Latino,Female,1962-10-02
+PT000298,Other,Hispanic or Latino,Male,1930-02-23
+PT000299,Black or African American,Not Hispanic or Latino,Male,1935-04-06
+PT000300,Other,Not Hispanic or Latino,Male,1998-04-10
+PT000301,White,Not Hispanic or Latino,Male,1999-11-25
+PT000302,White,Not Hispanic or Latino,Female,1971-12-13
+PT000303,Asian,Not Hispanic or Latino,Male,1994-06-28
+PT000304,White,Not Hispanic or Latino,Male,1974-10-30
+PT000305,Black or African American,Not Hispanic or Latino,Female,1940-12-11
+PT000306,White,Not Hispanic or Latino,Female,1939-05-02
+PT000307,Asian,Not Hispanic or Latino,Female,1953-06-08
+PT000308,White,Hispanic or Latino,Female,1999-07-07
+PT000309,White,Not Hispanic or Latino,Male,1991-06-28
+PT000310,White,Not Hispanic or Latino,Male,1996-07-11
+PT000311,White,Hispanic or Latino,Female,1999-07-05
+PT000312,White,Not Hispanic or Latino,Male,1945-10-11
+PT000313,White,Hispanic or Latino,Male,1948-11-08
+PT000314,White,Not Hispanic or Latino,Female,1937-05-30
+PT000315,Black or African American,Hispanic or Latino,Male,1990-03-29
+PT000316,White,Not Hispanic or Latino,Female,1998-05-10
+PT000317,Other,Not Hispanic or Latino,Female,1961-02-02
+PT000318,Black or African American,Not Hispanic or Latino,Female,1977-10-21
+PT000319,White,Not Hispanic or Latino,Male,1941-06-13
+PT000320,White,Not Hispanic or Latino,Female,2001-12-03
+PT000321,White,Not Hispanic or Latino,Male,1996-10-30
+PT000322,White,Not Hispanic or Latino,Male,2005-07-15
+PT000323,Black or African American,Not Hispanic or Latino,Female,1992-08-19
+PT000324,White,Not Hispanic or Latino,Female,1998-02-21
+PT000325,Black or African American,Not Hispanic or Latino,Male,1931-04-30
+PT000326,White,Not Hispanic or Latino,Male,1986-11-04
+PT000327,White,Not Hispanic or Latino,Male,1955-04-21
+PT000328,Asian,Not Hispanic or Latino,Male,2001-12-30
+PT000329,Black or African American,Not Hispanic or Latino,Female,1991-12-19
+PT000330,White,Not Hispanic or Latino,Female,1996-10-15
+PT000331,Asian,Not Hispanic or Latino,Male,1992-08-18
+PT000332,White,Not Hispanic or Latino,Male,1950-03-16
+PT000333,Other,Not Hispanic or Latino,Female,1990-10-22
+PT000334,White,Not Hispanic or Latino,Male,1937-10-28
+PT000335,Other,Hispanic or Latino,Female,1997-06-03
+PT000336,Black or African American,Not Hispanic or Latino,Female,1996-05-12
+PT000337,White,Not Hispanic or Latino,Male,1946-09-28
+PT000338,Unknown,Hispanic or Latino,Male,1993-01-31
+PT000339,Black or African American,Hispanic or Latino,Male,1965-04-18
+PT000340,White,Hispanic or Latino,Male,1953-03-13
+PT000341,Black or African American,Not Hispanic or Latino,Female,1991-06-06
+PT000342,Unknown,Hispanic or Latino,Male,1947-02-22
+PT000343,Other,Hispanic or Latino,Male,1931-03-29
+PT000344,Asian,Not Hispanic or Latino,Female,1944-06-16
+PT000345,White,Not Hispanic or Latino,Male,1954-12-30
+PT000346,Black or African American,Not Hispanic or Latino,Female,1996-10-23
+PT000347,White,Not Hispanic or Latino,Male,2004-10-22
+PT000348,Asian,Not Hispanic or Latino,Female,1951-03-01
+PT000349,Other,Not Hispanic or Latino,Male,1979-06-06
+PT000350,White,Hispanic or Latino,Male,1960-07-26
+PT000351,Other,Not Hispanic or Latino,Female,2005-12-02
+PT000352,Asian,Unknown,Male,1971-03-21
+PT000353,Asian,Not Hispanic or Latino,Male,2002-08-26
+PT000354,Black or African American,Hispanic or Latino,Female,1938-05-22
+PT000355,Asian,Not Hispanic or Latino,Male,2005-01-30
+PT000356,Black or African American,Not Hispanic or Latino,Male,1943-04-28
+PT000357,White,Not Hispanic or Latino,Male,2004-06-20
+PT000358,White,Not Hispanic or Latino,Male,1950-02-05
+PT000359,Unknown,Not Hispanic or Latino,Male,1937-11-06
+PT000360,Black or African American,Not Hispanic or Latino,Female,1963-04-16
+PT000361,Asian,Not Hispanic or Latino,Male,1986-03-21
+PT000362,Other,Hispanic or Latino,Male,1953-11-10
+PT000363,Black or African American,Not Hispanic or Latino,Female,1976-09-04
+PT000364,White,Hispanic or Latino,Female,1969-04-13
+PT000365,Black or African American,Not Hispanic or Latino,Male,1959-06-09
+PT000366,White,Not Hispanic or Latino,Male,1974-05-14
+PT000367,Asian,Not Hispanic or Latino,Male,1949-04-05
+PT000368,Unknown,Hispanic or Latino,Female,1984-09-04
+PT000369,Unknown,Not Hispanic or Latino,Male,1929-07-11
+PT000370,Asian,Not Hispanic or Latino,Male,2001-08-02
+PT000371,Asian,Not Hispanic or Latino,Male,1971-05-23
+PT000372,White,Not Hispanic or Latino,Female,1985-07-04
+PT000373,White,Hispanic or Latino,Male,1987-04-07
+PT000374,White,Hispanic or Latino,Female,1981-09-13
+PT000375,Other,Hispanic or Latino,Female,1957-10-20
+PT000376,White,Not Hispanic or Latino,Male,1934-11-07
+PT000377,White,Not Hispanic or Latino,Female,1981-03-15
+PT000378,White,Not Hispanic or Latino,Male,1955-02-24
+PT000379,Black or African American,Not Hispanic or Latino,Female,1953-11-17
+PT000380,White,Not Hispanic or Latino,Female,1995-07-16
+PT000381,Asian,Not Hispanic or Latino,Female,1985-07-14
+PT000382,White,Not Hispanic or Latino,Female,1952-10-25
+PT000383,Asian,Not Hispanic or Latino,Female,1953-07-08
+PT000384,Other,Hispanic or Latino,Female,1961-03-31
+PT000385,Black or African American,Not Hispanic or Latino,Female,1960-10-11
+PT000386,Asian,Not Hispanic or Latino,Female,1952-06-14
+PT000387,Other,Not Hispanic or Latino,Female,1939-04-28
+PT000388,White,Not Hispanic or Latino,Female,1962-03-10
+PT000389,White,Hispanic or Latino,Female,2002-09-28
+PT000390,White,Not Hispanic or Latino,Male,1982-03-23
+PT000391,Black or African American,Unknown,Female,1999-10-24
+PT000392,White,Not Hispanic or Latino,Male,1977-05-27
+PT000393,Asian,Not Hispanic or Latino,Female,1952-11-12
+PT000394,White,Unknown,Male,1972-02-18
+PT000395,Black or African American,Hispanic or Latino,Male,1929-06-04
+PT000396,Other,Not Hispanic or Latino,Male,1951-10-09
+PT000397,White,Hispanic or Latino,Male,1962-12-04
+PT000398,White,Not Hispanic or Latino,Female,1974-08-19
+PT000399,White,Hispanic or Latino,Female,1980-06-16
+PT000400,Unknown,Hispanic or Latino,Male,1965-08-30
+PT000401,Asian,Not Hispanic or Latino,Male,1963-11-18
+PT000402,White,Not Hispanic or Latino,Female,1946-01-23
+PT000403,Black or African American,Not Hispanic or Latino,Male,1966-04-20
+PT000404,Unknown,Not Hispanic or Latino,Male,1999-09-07
+PT000405,White,Hispanic or Latino,Female,1991-06-25
+PT000406,White,Not Hispanic or Latino,Female,1942-08-18
+PT000407,Black or African American,Not Hispanic or Latino,Female,1936-01-03
+PT000408,White,Not Hispanic or Latino,Female,1969-08-06
+PT000409,White,Not Hispanic or Latino,Male,1978-10-05
+PT000410,White,Unknown,Male,1955-07-16
+PT000411,Other,Not Hispanic or Latino,Male,1993-03-25
+PT000412,White,Not Hispanic or Latino,Male,1987-12-25
+PT000413,Other,Not Hispanic or Latino,Female,1981-11-14
+PT000414,White,Hispanic or Latino,Female,1946-11-30
+PT000415,Asian,Hispanic or Latino,Female,1944-12-04
+PT000416,Black or African American,Not Hispanic or Latino,Male,1931-04-19
+PT000417,Other,Not Hispanic or Latino,Female,1948-06-28
+PT000418,White,Not Hispanic or Latino,Male,1966-06-15
+PT000419,Black or African American,Not Hispanic or Latino,Male,1995-09-03
+PT000420,White,Not Hispanic or Latino,Female,1935-01-27
+PT000421,White,Hispanic or Latino,Male,1961-09-20
+PT000422,White,Not Hispanic or Latino,Male,1978-07-07
+PT000423,White,Not Hispanic or Latino,Female,1944-07-23
+PT000424,White,Not Hispanic or Latino,Female,1983-09-16
+PT000425,Asian,Not Hispanic or Latino,Male,1967-12-15
+PT000426,White,Not Hispanic or Latino,Female,1948-06-03
+PT000427,White,Not Hispanic or Latino,Female,1980-07-25
+PT000428,Black or African American,Not Hispanic or Latino,Male,1929-10-28
+PT000429,White,Not Hispanic or Latino,Male,1987-12-20
+PT000430,White,Not Hispanic or Latino,Male,1989-06-15
+PT000431,White,Not Hispanic or Latino,Female,1937-09-15
+PT000432,Black or African American,Hispanic or Latino,Male,1962-07-21
+PT000433,White,Not Hispanic or Latino,Female,1943-02-10
+PT000434,Black or African American,Not Hispanic or Latino,Female,2004-02-11
+PT000435,White,Not Hispanic or Latino,Female,1969-10-17
+PT000436,Other,Hispanic or Latino,Female,1933-04-23
+PT000437,White,Hispanic or Latino,Male,1948-10-30
+PT000438,Other,Not Hispanic or Latino,Female,1995-07-25
+PT000439,White,Not Hispanic or Latino,Male,1964-12-30
+PT000440,Black or African American,Not Hispanic or Latino,Male,1991-11-26
+PT000441,White,Not Hispanic or Latino,Female,1981-06-18
+PT000442,White,Unknown,Male,2006-06-13
+PT000443,White,Hispanic or Latino,Female,1975-11-02
+PT000444,White,Not Hispanic or Latino,Female,2003-06-30
+PT000445,White,Unknown,Female,1998-12-03
+PT000446,Black or African American,Not Hispanic or Latino,Female,1977-03-06
+PT000447,White,Not Hispanic or Latino,Male,1985-06-30
+PT000448,White,Hispanic or Latino,Female,1968-10-06
+PT000449,Black or African American,Not Hispanic or Latino,Male,1994-03-06
+PT000450,White,Unknown,Male,1972-02-16
+PT000451,Other,Not Hispanic or Latino,Male,1999-05-17
+PT000452,Black or African American,Not Hispanic or Latino,Female,1987-05-25
+PT000453,Other,Not Hispanic or Latino,Male,1966-06-02
+PT000454,White,Hispanic or Latino,Male,1949-08-11
+PT000455,Black or African American,Not Hispanic or Latino,Female,1948-09-04
+PT000456,White,Hispanic or Latino,Female,1979-02-17
+PT000457,White,Not Hispanic or Latino,Female,1989-02-15
+PT000458,White,Hispanic or Latino,Male,1970-01-20
+PT000459,White,Hispanic or Latino,Male,1978-04-12
+PT000460,White,Not Hispanic or Latino,Female,1950-10-24
+PT000461,White,Not Hispanic or Latino,Female,1935-06-09
+PT000462,White,Not Hispanic or Latino,Male,1951-09-06
+PT000463,Asian,Not Hispanic or Latino,Female,1950-08-02
+PT000464,White,Not Hispanic or Latino,Male,1954-05-01
+PT000465,White,Not Hispanic or Latino,Male,1971-07-11
+PT000466,Asian,Not Hispanic or Latino,Male,1940-03-09
+PT000467,Black or African American,Hispanic or Latino,Male,1947-06-07
+PT000468,White,Not Hispanic or Latino,Female,1983-07-09
+PT000469,Black or African American,Not Hispanic or Latino,Female,1984-06-29
+PT000470,Asian,Not Hispanic or Latino,Female,1934-05-27
+PT000471,White,Not Hispanic or Latino,Male,1961-03-09
+PT000472,White,Not Hispanic or Latino,Female,1971-09-19
+PT000473,White,Not Hispanic or Latino,Male,1961-10-27
+PT000474,Other,Not Hispanic or Latino,Male,1945-07-11
+PT000475,White,Not Hispanic or Latino,Female,1962-03-01
+PT000476,Unknown,Not Hispanic or Latino,Female,1999-12-20
+PT000477,Black or African American,Hispanic or Latino,Male,1974-12-13
+PT000478,White,Not Hispanic or Latino,Female,1983-08-23
+PT000479,White,Not Hispanic or Latino,Male,1996-03-20
+PT000480,Black or African American,Not Hispanic or Latino,Female,1989-02-09
+PT000481,Unknown,Not Hispanic or Latino,Female,1959-01-23
+PT000482,White,Hispanic or Latino,Male,1929-11-07
+PT000483,Black or African American,Hispanic or Latino,Female,1956-10-30
+PT000484,Black or African American,Not Hispanic or Latino,Female,1988-02-29
+PT000485,Other,Not Hispanic or Latino,Male,1995-12-17
+PT000486,Other,Not Hispanic or Latino,Female,2003-10-05
+PT000487,White,Not Hispanic or Latino,Male,1962-01-28
+PT000488,Black or African American,Not Hispanic or Latino,Female,1987-09-12
+PT000489,Unknown,Not Hispanic or Latino,Female,1971-12-28
+PT000490,White,Hispanic or Latino,Female,1976-06-12
+PT000491,White,Hispanic or Latino,Female,1946-08-05
+PT000492,White,Not Hispanic or Latino,Female,1946-07-05
+PT000493,Asian,Hispanic or Latino,Female,1963-05-22
+PT000494,White,Hispanic or Latino,Male,1931-08-28
+PT000495,White,Not Hispanic or Latino,Male,1955-08-11
+PT000496,White,Not Hispanic or Latino,Female,1982-05-14
+PT000497,White,Not Hispanic or Latino,Male,1960-12-05
+PT000498,White,Not Hispanic or Latino,Male,1942-04-07
+PT000499,Black or African American,Not Hispanic or Latino,Female,1965-11-06
+PT000500,White,Not Hispanic or Latino,Female,1939-05-07
+PT000501,White,Not Hispanic or Latino,Male,1977-12-05
+PT000502,White,Not Hispanic or Latino,Male,1931-07-01
+PT000503,White,Not Hispanic or Latino,Female,1960-02-16
+PT000504,Asian,Hispanic or Latino,Female,1973-05-31
+PT000505,Unknown,Not Hispanic or Latino,Male,1931-07-05
+PT000506,White,Not Hispanic or Latino,Female,1979-07-12
+PT000507,White,Hispanic or Latino,Male,1939-12-23
+PT000508,Other,Not Hispanic or Latino,Male,1965-05-28
+PT000509,White,Not Hispanic or Latino,Male,1933-04-25
+PT000510,White,Hispanic or Latino,Male,1958-12-18
+PT000511,White,Not Hispanic or Latino,Female,1945-11-25
+PT000512,White,Not Hispanic or Latino,Male,1954-11-20
+PT000513,White,Not Hispanic or Latino,Male,1988-10-07
+PT000514,White,Hispanic or Latino,Male,1958-12-18
+PT000515,White,Not Hispanic or Latino,Female,1988-01-19
+PT000516,White,Hispanic or Latino,Female,1994-04-13
+PT000517,White,Not Hispanic or Latino,Female,1949-01-25
+PT000518,Black or African American,Hispanic or Latino,Female,1935-10-13
+PT000519,White,Not Hispanic or Latino,Female,1930-11-27
+PT000520,White,Hispanic or Latino,Female,1971-06-20
+PT000521,White,Not Hispanic or Latino,Female,2007-05-21
+PT000522,White,Hispanic or Latino,Male,1956-09-09
+PT000523,Black or African American,Not Hispanic or Latino,Female,1980-02-07
+PT000524,White,Not Hispanic or Latino,Male,1990-04-30
+PT000525,Black or African American,Hispanic or Latino,Male,1980-03-24
+PT000526,White,Not Hispanic or Latino,Female,1988-03-22
+PT000527,Black or African American,Not Hispanic or Latino,Male,2003-06-18
+PT000528,White,Not Hispanic or Latino,Male,1944-12-10
+PT000529,Unknown,Not Hispanic or Latino,Female,1930-12-25
+PT000530,White,Not Hispanic or Latino,Female,1941-04-12
+PT000531,Black or African American,Unknown,Male,1939-03-28
+PT000532,White,Hispanic or Latino,Female,1981-08-11
+PT000533,White,Not Hispanic or Latino,Male,1973-05-19
+PT000534,Other,Not Hispanic or Latino,Male,1946-05-24
+PT000535,White,Not Hispanic or Latino,Male,1983-12-14
+PT000536,White,Not Hispanic or Latino,Female,1989-03-18
+PT000537,White,Not Hispanic or Latino,Female,1942-06-25
+PT000538,Black or African American,Not Hispanic or Latino,Male,1976-10-03
+PT000539,White,Not Hispanic or Latino,Female,1987-09-24
+PT000540,Black or African American,Not Hispanic or Latino,Female,1938-04-29
+PT000541,White,Not Hispanic or Latino,Female,1993-04-19
+PT000542,Unknown,Not Hispanic or Latino,Female,2004-08-21
+PT000543,White,Not Hispanic or Latino,Male,1937-10-28
+PT000544,White,Hispanic or Latino,Male,1931-05-25
+PT000545,Black or African American,Hispanic or Latino,Female,1953-09-22
+PT000546,White,Not Hispanic or Latino,Male,1982-03-23
+PT000547,Unknown,Hispanic or Latino,Male,2004-02-17
+PT000548,Asian,Not Hispanic or Latino,Female,1960-05-01
+PT000549,White,Hispanic or Latino,Male,1985-03-01
+PT000550,Asian,Hispanic or Latino,Female,1935-04-28
+PT000551,White,Not Hispanic or Latino,Male,1983-04-05
+PT000552,White,Not Hispanic or Latino,Female,1978-04-26
+PT000553,White,Not Hispanic or Latino,Male,1937-05-05
+PT000554,White,Not Hispanic or Latino,Male,1989-08-24
+PT000555,Other,Not Hispanic or Latino,Female,1995-09-19
+PT000556,Other,Not Hispanic or Latino,Female,1976-03-23
+PT000557,White,Hispanic or Latino,Male,1938-11-01
+PT000558,Other,Hispanic or Latino,Female,2006-02-17
+PT000559,Asian,Not Hispanic or Latino,Male,1990-06-09
+PT000560,White,Not Hispanic or Latino,Female,1956-06-22
+PT000561,White,Unknown,Female,1962-10-22
+PT000562,Asian,Not Hispanic or Latino,Female,1958-04-19
+PT000563,Other,Not Hispanic or Latino,Female,1968-11-09
+PT000564,Asian,Not Hispanic or Latino,Male,1956-01-04
+PT000565,White,Not Hispanic or Latino,Male,1995-08-29
+PT000566,White,Not Hispanic or Latino,Male,1993-07-14
+PT000567,Unknown,Not Hispanic or Latino,Female,1937-08-16
+PT000568,White,Not Hispanic or Latino,Male,2004-05-01
+PT000569,White,Not Hispanic or Latino,Female,1978-12-20
+PT000570,White,Not Hispanic or Latino,Female,1994-01-12
+PT000571,White,Not Hispanic or Latino,Female,1984-07-24
+PT000572,White,Not Hispanic or Latino,Female,1963-05-12
+PT000573,White,Not Hispanic or Latino,Female,1986-08-18
+PT000574,White,Not Hispanic or Latino,Male,2004-09-12
+PT000575,White,Not Hispanic or Latino,Female,1950-06-17
+PT000576,White,Not Hispanic or Latino,Female,1992-06-06
+PT000577,Asian,Not Hispanic or Latino,Male,1971-05-16
+PT000578,Black or African American,Not Hispanic or Latino,Male,1967-02-08
+PT000579,White,Hispanic or Latino,Male,1963-05-15
+PT000580,White,Not Hispanic or Latino,Male,1986-05-31
+PT000581,Asian,Hispanic or Latino,Female,1950-04-30
+PT000582,White,Not Hispanic or Latino,Male,1995-10-29
+PT000583,White,Not Hispanic or Latino,Female,1994-03-10
+PT000584,White,Not Hispanic or Latino,Male,1936-02-25
+PT000585,White,Not Hispanic or Latino,Female,1998-02-27
+PT000586,Asian,Unknown,Male,1948-05-31
+PT000587,White,Not Hispanic or Latino,Male,1965-08-22
+PT000588,Asian,Not Hispanic or Latino,Male,1976-12-30
+PT000589,White,Not Hispanic or Latino,Female,1958-12-15
+PT000590,White,Not Hispanic or Latino,Male,1931-08-19
+PT000591,White,Hispanic or Latino,Female,1995-10-07
+PT000592,Unknown,Hispanic or Latino,Male,1943-07-30
+PT000593,Black or African American,Not Hispanic or Latino,Male,1945-12-09
+PT000594,Asian,Not Hispanic or Latino,Female,1991-08-16
+PT000595,White,Not Hispanic or Latino,Female,1955-12-09
+PT000596,Other,Not Hispanic or Latino,Female,1998-01-21
+PT000597,White,Not Hispanic or Latino,Male,1984-02-01
+PT000598,Black or African American,Not Hispanic or Latino,Female,1950-12-10
+PT000599,White,Not Hispanic or Latino,Female,1930-03-09
+PT000600,White,Not Hispanic or Latino,Male,2003-05-05
+PT000601,Unknown,Hispanic or Latino,Male,1936-01-27
+PT000602,White,Not Hispanic or Latino,Female,1985-07-23
+PT000603,Black or African American,Not Hispanic or Latino,Male,1967-07-03
+PT000604,White,Not Hispanic or Latino,Female,1988-07-12
+PT000605,White,Not Hispanic or Latino,Male,1983-04-05
+PT000606,Unknown,Not Hispanic or Latino,Female,1979-10-10
+PT000607,Black or African American,Not Hispanic or Latino,Male,1967-09-05
+PT000608,White,Not Hispanic or Latino,Female,1991-03-29
+PT000609,Black or African American,Not Hispanic or Latino,Male,1936-08-25
+PT000610,Unknown,Hispanic or Latino,Male,1946-09-05
+PT000611,Unknown,Not Hispanic or Latino,Female,1983-05-09
+PT000612,Black or African American,Hispanic or Latino,Female,1953-04-11
+PT000613,White,Not Hispanic or Latino,Female,1974-10-02
+PT000614,White,Not Hispanic or Latino,Male,1966-04-22
+PT000615,White,Not Hispanic or Latino,Female,1970-10-21
+PT000616,White,Not Hispanic or Latino,Male,1962-08-01
+PT000617,Other,Not Hispanic or Latino,Male,1987-07-29
+PT000618,Asian,Hispanic or Latino,Female,1955-03-12
+PT000619,Other,Not Hispanic or Latino,Female,1984-03-19
+PT000620,White,Hispanic or Latino,Female,1950-07-11
+PT000621,Asian,Not Hispanic or Latino,Male,1949-01-01
+PT000622,White,Unknown,Female,1938-10-21
+PT000623,White,Not Hispanic or Latino,Male,1944-05-31
+PT000624,Black or African American,Hispanic or Latino,Male,1938-09-19
+PT000625,White,Hispanic or Latino,Female,1971-03-11
+PT000626,White,Not Hispanic or Latino,Male,1988-11-04
+PT000627,White,Not Hispanic or Latino,Female,1943-11-01
+PT000628,Other,Not Hispanic or Latino,Female,1946-04-09
+PT000629,White,Not Hispanic or Latino,Male,1967-02-28
+PT000630,White,Hispanic or Latino,Female,1985-11-28
+PT000631,White,Not Hispanic or Latino,Female,2005-07-26
+PT000632,White,Not Hispanic or Latino,Female,1970-04-25
+PT000633,Black or African American,Not Hispanic or Latino,Male,1951-06-20
+PT000634,Asian,Not Hispanic or Latino,Male,1937-03-26
+PT000635,Asian,Not Hispanic or Latino,Female,1944-07-14
+PT000636,White,Unknown,Male,1947-02-19
+PT000637,White,Not Hispanic or Latino,Male,1943-05-23
+PT000638,Other,Unknown,Male,1930-07-01
+PT000639,White,Hispanic or Latino,Female,1971-01-20
+PT000640,White,Not Hispanic or Latino,Male,1950-10-15
+PT000641,Black or African American,Not Hispanic or Latino,Female,2005-05-21
+PT000642,White,Hispanic or Latino,Male,1972-07-21
+PT000643,White,Not Hispanic or Latino,Female,1983-10-16
+PT000644,White,Not Hispanic or Latino,Female,1939-03-30
+PT000645,White,Not Hispanic or Latino,Female,1997-02-17
+PT000646,Asian,Not Hispanic or Latino,Female,1967-09-06
+PT000647,White,Not Hispanic or Latino,Male,1997-06-18
+PT000648,White,Hispanic or Latino,Female,1974-03-03
+PT000649,Asian,Not Hispanic or Latino,Male,1966-01-02
+PT000650,White,Not Hispanic or Latino,Male,1963-10-01
+PT000651,White,Not Hispanic or Latino,Female,1943-10-10
+PT000652,Black or African American,Unknown,Female,1933-05-26
+PT000653,Black or African American,Not Hispanic or Latino,Female,2002-10-17
+PT000654,Asian,Not Hispanic or Latino,Male,1966-08-28
+PT000655,Asian,Not Hispanic or Latino,Female,1993-07-08
+PT000656,White,Not Hispanic or Latino,Male,1960-08-24
+PT000657,White,Not Hispanic or Latino,Male,1935-03-04
+PT000658,Asian,Not Hispanic or Latino,Male,1978-06-28
+PT000659,White,Hispanic or Latino,Male,1933-07-29
+PT000660,White,Hispanic or Latino,Female,1941-01-11
+PT000661,White,Hispanic or Latino,Male,1973-04-17
+PT000662,White,Not Hispanic or Latino,Male,1953-02-02
+PT000663,Black or African American,Not Hispanic or Latino,Male,2006-12-01
+PT000664,Black or African American,Hispanic or Latino,Male,1938-08-19
+PT000665,Black or African American,Not Hispanic or Latino,Female,1989-01-07
+PT000666,Black or African American,Unknown,Male,1976-09-07
+PT000667,White,Not Hispanic or Latino,Male,1991-01-26
+PT000668,White,Hispanic or Latino,Male,1946-12-30
+PT000669,White,Hispanic or Latino,Male,1970-02-25
+PT000670,Asian,Not Hispanic or Latino,Male,1964-07-13
+PT000671,White,Not Hispanic or Latino,Female,1963-12-04
+PT000672,White,Not Hispanic or Latino,Male,1996-06-26
+PT000673,White,Hispanic or Latino,Male,2006-08-13
+PT000674,Black or African American,Unknown,Female,1953-03-18
+PT000675,Other,Not Hispanic or Latino,Male,1977-10-31
+PT000676,White,Hispanic or Latino,Female,1976-12-10
+PT000677,White,Not Hispanic or Latino,Male,1987-02-13
+PT000678,White,Not Hispanic or Latino,Female,2003-04-21
+PT000679,Black or African American,Not Hispanic or Latino,Male,1945-08-07
+PT000680,White,Not Hispanic or Latino,Male,1945-11-07
+PT000681,Other,Not Hispanic or Latino,Male,1980-11-26
+PT000682,White,Hispanic or Latino,Female,1941-08-23
+PT000683,White,Hispanic or Latino,Male,1942-12-13
+PT000684,White,Not Hispanic or Latino,Male,1935-04-01
+PT000685,White,Hispanic or Latino,Female,1929-08-08
+PT000686,Black or African American,Not Hispanic or Latino,Male,1964-07-13
+PT000687,Black or African American,Not Hispanic or Latino,Male,1975-09-17
+PT000688,White,Hispanic or Latino,Male,1952-02-10
+PT000689,White,Hispanic or Latino,Male,1947-06-13
+PT000690,White,Not Hispanic or Latino,Male,1984-07-14
+PT000691,Asian,Not Hispanic or Latino,Male,1984-03-23
+PT000692,Other,Hispanic or Latino,Female,1964-10-21
+PT000693,White,Not Hispanic or Latino,Female,1983-01-03
+PT000694,Asian,Not Hispanic or Latino,Male,2001-06-16
+PT000695,White,Hispanic or Latino,Male,1990-11-04
+PT000696,White,Not Hispanic or Latino,Female,1978-02-23
+PT000697,Asian,Not Hispanic or Latino,Female,1980-12-18
+PT000698,Unknown,Not Hispanic or Latino,Male,2002-03-21
+PT000699,White,Hispanic or Latino,Female,1962-07-21
+PT000700,Black or African American,Hispanic or Latino,Male,1971-11-14
+PT000701,Other,Not Hispanic or Latino,Male,1979-11-28
+PT000702,Black or African American,Hispanic or Latino,Male,2000-03-31
+PT000703,Other,Hispanic or Latino,Male,1993-11-13
+PT000704,Unknown,Not Hispanic or Latino,Male,1934-12-18
+PT000705,White,Hispanic or Latino,Female,1942-05-02
+PT000706,White,Not Hispanic or Latino,Female,1953-05-21
+PT000707,White,Hispanic or Latino,Female,1987-10-24
+PT000708,White,Unknown,Male,1973-10-16
+PT000709,Unknown,Not Hispanic or Latino,Female,1951-11-27
+PT000710,White,Hispanic or Latino,Male,1939-02-03
+PT000711,White,Not Hispanic or Latino,Female,1983-02-09
+PT000712,White,Hispanic or Latino,Female,1983-12-21
+PT000713,White,Hispanic or Latino,Male,2002-12-02
+PT000714,Other,Hispanic or Latino,Male,1968-06-05
+PT000715,Black or African American,Not Hispanic or Latino,Male,1967-11-28
+PT000716,Asian,Not Hispanic or Latino,Male,1935-09-01
+PT000717,White,Hispanic or Latino,Male,1932-07-02
+PT000718,White,Hispanic or Latino,Female,1963-02-03
+PT000719,White,Not Hispanic or Latino,Male,1954-07-14
+PT000720,White,Not Hispanic or Latino,Female,1948-12-02
+PT000721,Black or African American,Not Hispanic or Latino,Male,1936-07-07
+PT000722,Asian,Not Hispanic or Latino,Female,2004-06-02
+PT000723,Black or African American,Not Hispanic or Latino,Female,1994-08-06
+PT000724,White,Not Hispanic or Latino,Male,1974-04-04
+PT000725,White,Hispanic or Latino,Male,2003-07-21
+PT000726,Asian,Not Hispanic or Latino,Female,2007-05-11
+PT000727,Black or African American,Not Hispanic or Latino,Male,1981-10-30
+PT000728,White,Not Hispanic or Latino,Male,1950-06-01
+PT000729,Black or African American,Hispanic or Latino,Female,1932-07-13
+PT000730,Asian,Hispanic or Latino,Female,1988-05-19
+PT000731,White,Hispanic or Latino,Female,1966-02-03
+PT000732,White,Not Hispanic or Latino,Male,1980-03-17
+PT000733,White,Hispanic or Latino,Male,2000-11-04
+PT000734,White,Unknown,Male,1943-07-20
+PT000735,White,Not Hispanic or Latino,Female,1975-01-18
+PT000736,Other,Not Hispanic or Latino,Female,1978-11-27
+PT000737,White,Hispanic or Latino,Female,1967-09-30
+PT000738,Asian,Not Hispanic or Latino,Female,1936-07-05
+PT000739,Black or African American,Not Hispanic or Latino,Female,1956-07-14
+PT000740,White,Hispanic or Latino,Male,1955-05-23
+PT000741,Black or African American,Not Hispanic or Latino,Male,1981-08-30
+PT000742,White,Not Hispanic or Latino,Male,1996-04-17
+PT000743,White,Not Hispanic or Latino,Male,1955-02-12
+PT000744,White,Hispanic or Latino,Male,1983-07-02
+PT000745,Other,Hispanic or Latino,Female,1951-11-16
+PT000746,White,Hispanic or Latino,Male,2003-02-12
+PT000747,White,Not Hispanic or Latino,Female,1992-11-06
+PT000748,White,Not Hispanic or Latino,Female,1972-04-19
+PT000749,Other,Not Hispanic or Latino,Male,1964-11-13
+PT000750,Asian,Not Hispanic or Latino,Male,1953-12-04
+PT000751,White,Hispanic or Latino,Female,1954-08-10
+PT000752,Asian,Hispanic or Latino,Female,2005-01-24
+PT000753,White,Not Hispanic or Latino,Male,1960-12-01
+PT000754,White,Hispanic or Latino,Female,1969-07-13
+PT000755,Other,Not Hispanic or Latino,Female,2006-06-19
+PT000756,Black or African American,Not Hispanic or Latino,Female,1980-09-09
+PT000757,White,Not Hispanic or Latino,Male,1971-09-18
+PT000758,White,Not Hispanic or Latino,Female,1961-08-17
+PT000759,Unknown,Not Hispanic or Latino,Female,1944-01-10
+PT000760,White,Not Hispanic or Latino,Male,1957-08-11
+PT000761,White,Not Hispanic or Latino,Male,1988-05-24
+PT000762,White,Not Hispanic or Latino,Male,1978-03-05
+PT000763,Unknown,Not Hispanic or Latino,Male,1988-09-02
+PT000764,White,Not Hispanic or Latino,Male,1945-04-09
+PT000765,White,Not Hispanic or Latino,Male,1972-03-25
+PT000766,White,Not Hispanic or Latino,Male,2001-10-01
+PT000767,White,Not Hispanic or Latino,Female,1963-07-26
+PT000768,White,Not Hispanic or Latino,Male,1983-11-09
+PT000769,Other,Not Hispanic or Latino,Male,1938-11-12
+PT000770,Black or African American,Not Hispanic or Latino,Male,2005-04-18
+PT000771,White,Hispanic or Latino,Male,1976-11-19
+PT000772,Black or African American,Unknown,Male,1948-01-22
+PT000773,White,Not Hispanic or Latino,Male,1941-09-30
+PT000774,White,Hispanic or Latino,Female,1972-05-10
+PT000775,Black or African American,Not Hispanic or Latino,Female,1972-06-20
+PT000776,Unknown,Hispanic or Latino,Male,1936-08-30
+PT000777,Black or African American,Not Hispanic or Latino,Male,2006-10-15
+PT000778,White,Not Hispanic or Latino,Female,2000-08-07
+PT000779,White,Not Hispanic or Latino,Male,1965-05-21
+PT000780,White,Not Hispanic or Latino,Male,1938-07-22
+PT000781,Asian,Not Hispanic or Latino,Male,1994-04-19
+PT000782,White,Hispanic or Latino,Female,1968-04-07
+PT000783,Black or African American,Not Hispanic or Latino,Female,1985-04-15
+PT000784,White,Not Hispanic or Latino,Female,1969-01-31
+PT000785,Black or African American,Hispanic or Latino,Female,1950-09-20
+PT000786,White,Hispanic or Latino,Male,1994-07-02
+PT000787,White,Not Hispanic or Latino,Male,2005-11-07
+PT000788,White,Not Hispanic or Latino,Male,1948-05-27
+PT000789,White,Not Hispanic or Latino,Male,1972-05-22
+PT000790,White,Not Hispanic or Latino,Female,1959-04-24
+PT000791,Black or African American,Hispanic or Latino,Female,2001-04-19
+PT000792,White,Not Hispanic or Latino,Male,1969-01-13
+PT000793,White,Hispanic or Latino,Male,1997-12-24
+PT000794,Asian,Hispanic or Latino,Female,1996-10-14
+PT000795,Other,Not Hispanic or Latino,Male,1950-12-10
+PT000796,White,Not Hispanic or Latino,Female,1991-01-05
+PT000797,Black or African American,Not Hispanic or Latino,Male,1961-10-04
+PT000798,White,Not Hispanic or Latino,Male,2002-04-06
+PT000799,Other,Not Hispanic or Latino,Male,1968-12-29
+PT000800,White,Not Hispanic or Latino,Female,1993-05-24
+PT000801,White,Not Hispanic or Latino,Male,1951-06-15
+PT000802,White,Not Hispanic or Latino,Female,1952-09-05
+PT000803,White,Not Hispanic or Latino,Female,1975-03-05
+PT000804,White,Not Hispanic or Latino,Male,2007-04-22
+PT000805,White,Not Hispanic or Latino,Male,1967-08-02
+PT000806,Unknown,Not Hispanic or Latino,Male,1940-12-25
+PT000807,White,Not Hispanic or Latino,Male,1971-05-27
+PT000808,White,Hispanic or Latino,Male,1956-04-24
+PT000809,White,Hispanic or Latino,Male,1972-06-10
+PT000810,Unknown,Not Hispanic or Latino,Female,1971-10-12
+PT000811,Black or African American,Hispanic or Latino,Female,1964-11-28
+PT000812,White,Unknown,Male,1954-06-29
+PT000813,White,Not Hispanic or Latino,Male,1944-02-09
+PT000814,White,Not Hispanic or Latino,Male,1983-10-19
+PT000815,Asian,Hispanic or Latino,Male,1973-12-28
+PT000816,White,Not Hispanic or Latino,Male,1947-08-11
+PT000817,White,Not Hispanic or Latino,Male,1989-11-19
+PT000818,Unknown,Not Hispanic or Latino,Male,1932-10-18
+PT000819,White,Not Hispanic or Latino,Male,1987-06-24
+PT000820,Black or African American,Not Hispanic or Latino,Male,1984-05-26
+PT000821,Unknown,Hispanic or Latino,Female,1992-09-06
+PT000822,White,Not Hispanic or Latino,Male,1959-07-04
+PT000823,White,Not Hispanic or Latino,Male,1981-02-27
+PT000824,White,Not Hispanic or Latino,Female,1993-05-30
+PT000825,Other,Hispanic or Latino,Male,2005-11-23
+PT000826,Other,Not Hispanic or Latino,Female,1968-01-11
+PT000827,White,Hispanic or Latino,Male,1932-04-12
+PT000828,Other,Hispanic or Latino,Male,1968-07-27
+PT000829,White,Unknown,Male,1975-06-05
+PT000830,Other,Not Hispanic or Latino,Male,1997-03-24
+PT000831,White,Not Hispanic or Latino,Female,1997-07-30
+PT000832,White,Not Hispanic or Latino,Male,1963-09-26
+PT000833,White,Hispanic or Latino,Female,1970-06-01
+PT000834,White,Hispanic or Latino,Female,1965-01-12
+PT000835,White,Unknown,Male,1985-09-28
+PT000836,White,Hispanic or Latino,Male,1961-05-15
+PT000837,Asian,Hispanic or Latino,Male,1980-06-19
+PT000838,Other,Not Hispanic or Latino,Male,1941-06-07
+PT000839,Black or African American,Hispanic or Latino,Male,1966-01-05
+PT000840,White,Not Hispanic or Latino,Female,2004-12-27
+PT000841,Black or African American,Not Hispanic or Latino,Male,1955-10-20
+PT000842,White,Hispanic or Latino,Male,1983-06-04
+PT000843,White,Unknown,Male,1980-01-30
+PT000844,Unknown,Not Hispanic or Latino,Female,1995-10-30
+PT000845,White,Not Hispanic or Latino,Female,1995-11-16
+PT000846,Asian,Hispanic or Latino,Male,1996-06-02
+PT000847,Asian,Hispanic or Latino,Female,1959-01-13
+PT000848,Asian,Hispanic or Latino,Female,1954-02-03
+PT000849,White,Not Hispanic or Latino,Male,1985-06-14
+PT000850,White,Not Hispanic or Latino,Male,1988-08-16
+PT000851,White,Not Hispanic or Latino,Female,1997-06-09
+PT000852,Other,Not Hispanic or Latino,Female,1932-03-11
+PT000853,White,Not Hispanic or Latino,Male,1934-09-24
+PT000854,White,Hispanic or Latino,Female,1978-08-16
+PT000855,White,Not Hispanic or Latino,Male,2001-03-23
+PT000856,White,Not Hispanic or Latino,Male,2007-03-11
+PT000857,Asian,Hispanic or Latino,Male,1987-08-22
+PT000858,Other,Not Hispanic or Latino,Male,1963-03-30
+PT000859,White,Not Hispanic or Latino,Female,1937-01-26
+PT000860,Black or African American,Not Hispanic or Latino,Female,1978-10-28
+PT000861,White,Hispanic or Latino,Male,1997-06-14
+PT000862,White,Not Hispanic or Latino,Female,1963-12-31
+PT000863,White,Not Hispanic or Latino,Male,1983-07-11
+PT000864,Black or African American,Hispanic or Latino,Female,1999-11-10
+PT000865,White,Not Hispanic or Latino,Male,1932-12-24
+PT000866,Asian,Not Hispanic or Latino,Male,1991-06-29
+PT000867,White,Not Hispanic or Latino,Female,1952-04-10
+PT000868,White,Hispanic or Latino,Male,1958-08-18
+PT000869,White,Not Hispanic or Latino,Male,1940-09-30
+PT000870,White,Hispanic or Latino,Male,1970-10-28
+PT000871,Asian,Not Hispanic or Latino,Male,1973-07-14
+PT000872,Black or African American,Not Hispanic or Latino,Male,1991-03-18
+PT000873,White,Not Hispanic or Latino,Female,1942-08-26
+PT000874,White,Hispanic or Latino,Female,1935-07-21
+PT000875,White,Hispanic or Latino,Male,1997-04-26
+PT000876,Unknown,Not Hispanic or Latino,Female,1977-09-23
+PT000877,White,Not Hispanic or Latino,Female,1948-03-05
+PT000878,Black or African American,Not Hispanic or Latino,Male,2000-08-04
+PT000879,Black or African American,Not Hispanic or Latino,Female,1940-07-22
+PT000880,Asian,Unknown,Female,1965-05-12
+PT000881,White,Not Hispanic or Latino,Female,1949-03-15
+PT000882,Black or African American,Not Hispanic or Latino,Male,1949-04-23
+PT000883,Unknown,Not Hispanic or Latino,Male,1930-02-15
+PT000884,White,Not Hispanic or Latino,Male,1992-02-26
+PT000885,White,Not Hispanic or Latino,Female,1999-09-08
+PT000886,White,Hispanic or Latino,Female,1982-03-31
+PT000887,White,Not Hispanic or Latino,Male,1941-09-18
+PT000888,Other,Not Hispanic or Latino,Female,1963-11-06
+PT000889,Black or African American,Not Hispanic or Latino,Male,1956-05-06
+PT000890,Black or African American,Hispanic or Latino,Male,1975-03-23
+PT000891,Black or African American,Not Hispanic or Latino,Female,1979-03-25
+PT000892,White,Hispanic or Latino,Male,1962-06-28
+PT000893,White,Not Hispanic or Latino,Male,1948-11-25
+PT000894,White,Not Hispanic or Latino,Female,1995-04-29
+PT000895,White,Not Hispanic or Latino,Male,1944-12-06
+PT000896,White,Not Hispanic or Latino,Male,1959-05-26
+PT000897,White,Not Hispanic or Latino,Male,1967-01-31
+PT000898,White,Not Hispanic or Latino,Male,1947-11-23
+PT000899,Unknown,Not Hispanic or Latino,Female,1974-01-01
+PT000900,White,Hispanic or Latino,Female,1974-03-24
+PT000901,White,Unknown,Male,2006-10-27
+PT000902,White,Hispanic or Latino,Female,1952-06-02
+PT000903,White,Not Hispanic or Latino,Male,2005-09-02
+PT000904,White,Hispanic or Latino,Male,1980-09-25
+PT000905,White,Not Hispanic or Latino,Male,1950-10-20
+PT000906,White,Not Hispanic or Latino,Female,1973-07-14
+PT000907,Asian,Not Hispanic or Latino,Female,1982-11-19
+PT000908,Asian,Hispanic or Latino,Male,1987-06-23
+PT000909,White,Not Hispanic or Latino,Male,1933-03-21
+PT000910,White,Not Hispanic or Latino,Male,1976-09-09
+PT000911,Black or African American,Not Hispanic or Latino,Male,1968-02-20
+PT000912,Unknown,Hispanic or Latino,Female,1999-12-01
+PT000913,Unknown,Not Hispanic or Latino,Female,1951-09-19
+PT000914,White,Not Hispanic or Latino,Male,1991-09-14
+PT000915,White,Not Hispanic or Latino,Female,1976-09-28
+PT000916,Asian,Not Hispanic or Latino,Male,1956-11-15
+PT000917,Asian,Not Hispanic or Latino,Male,1979-01-18
+PT000918,Black or African American,Not Hispanic or Latino,Male,1977-10-27
+PT000919,Other,Not Hispanic or Latino,Male,1982-04-04
+PT000920,Other,Hispanic or Latino,Male,1985-08-16
+PT000921,White,Not Hispanic or Latino,Female,1980-10-22
+PT000922,White,Not Hispanic or Latino,Female,1994-10-13
+PT000923,White,Not Hispanic or Latino,Male,1978-05-25
+PT000924,Black or African American,Not Hispanic or Latino,Male,1999-11-10
+PT000925,Asian,Not Hispanic or Latino,Male,1979-10-22
+PT000926,White,Not Hispanic or Latino,Male,1953-06-28
+PT000927,White,Not Hispanic or Latino,Male,1963-10-11
+PT000928,Asian,Unknown,Female,1974-08-07
+PT000929,Other,Not Hispanic or Latino,Female,1986-07-08
+PT000930,White,Unknown,Female,1936-06-03
+PT000931,Black or African American,Unknown,Female,1952-05-30
+PT000932,White,Not Hispanic or Latino,Female,1987-09-11
+PT000933,White,Not Hispanic or Latino,Female,1943-02-03
+PT000934,White,Hispanic or Latino,Female,1939-09-14
+PT000935,Other,Unknown,Male,1971-06-20
+PT000936,Unknown,Hispanic or Latino,Male,2005-03-02
+PT000937,White,Hispanic or Latino,Male,1970-10-19
+PT000938,Black or African American,Not Hispanic or Latino,Male,2000-08-23
+PT000939,White,Hispanic or Latino,Male,1994-03-03
+PT000940,White,Not Hispanic or Latino,Male,1949-06-08
+PT000941,Other,Not Hispanic or Latino,Female,1993-09-19
+PT000942,White,Not Hispanic or Latino,Female,1966-12-23
+PT000943,Black or African American,Not Hispanic or Latino,Male,1992-04-19
+PT000944,White,Not Hispanic or Latino,Female,1987-08-16
+PT000945,White,Not Hispanic or Latino,Male,1955-10-24
+PT000946,Other,Unknown,Male,1938-05-18
+PT000947,Asian,Not Hispanic or Latino,Male,2004-06-30
+PT000948,Asian,Hispanic or Latino,Female,1940-05-16
+PT000949,White,Not Hispanic or Latino,Female,2004-10-11
+PT000950,White,Not Hispanic or Latino,Male,1996-06-25
+PT000951,Black or African American,Not Hispanic or Latino,Male,1985-11-18
+PT000952,Other,Not Hispanic or Latino,Male,2005-10-29
+PT000953,White,Not Hispanic or Latino,Male,2004-11-02
+PT000954,White,Hispanic or Latino,Male,1992-02-24
+PT000955,Unknown,Not Hispanic or Latino,Male,1957-12-03
+PT000956,White,Not Hispanic or Latino,Female,1991-01-24
+PT000957,White,Not Hispanic or Latino,Female,1930-06-24
+PT000958,Other,Hispanic or Latino,Male,1971-03-31
+PT000959,Asian,Not Hispanic or Latino,Male,1964-11-12
+PT000960,White,Not Hispanic or Latino,Male,1981-11-15
+PT000961,White,Hispanic or Latino,Male,1981-11-01
+PT000962,White,Not Hispanic or Latino,Female,1974-12-27
+PT000963,White,Not Hispanic or Latino,Female,1993-07-16
+PT000964,Asian,Not Hispanic or Latino,Female,2002-09-25
+PT000965,Asian,Not Hispanic or Latino,Male,1937-11-04
+PT000966,Other,Not Hispanic or Latino,Male,1947-08-19
+PT000967,White,Not Hispanic or Latino,Male,1931-05-06
+PT000968,Asian,Not Hispanic or Latino,Male,1998-05-12
+PT000969,White,Not Hispanic or Latino,Female,1973-03-07
+PT000970,White,Not Hispanic or Latino,Male,2000-10-12
+PT000971,White,Not Hispanic or Latino,Female,1946-08-29
+PT000972,Unknown,Not Hispanic or Latino,Female,1934-04-28
+PT000973,Black or African American,Hispanic or Latino,Male,1993-08-26
+PT000974,White,Not Hispanic or Latino,Female,2000-04-28
+PT000975,Asian,Not Hispanic or Latino,Male,1952-12-18
+PT000976,Other,Hispanic or Latino,Female,1961-03-28
+PT000977,Asian,Not Hispanic or Latino,Female,1940-04-18
+PT000978,Black or African American,Not Hispanic or Latino,Male,2003-03-15
+PT000979,Black or African American,Not Hispanic or Latino,Female,1953-02-18
+PT000980,White,Unknown,Male,1967-10-26
+PT000981,White,Not Hispanic or Latino,Male,1936-12-21
+PT000982,Black or African American,Hispanic or Latino,Male,1998-08-07
+PT000983,White,Not Hispanic or Latino,Male,1939-12-22
+PT000984,Other,Hispanic or Latino,Female,1964-10-10
+PT000985,Black or African American,Not Hispanic or Latino,Female,1981-09-09
+PT000986,Black or African American,Hispanic or Latino,Female,1987-05-11
+PT000987,White,Hispanic or Latino,Male,2003-03-06
+PT000988,White,Not Hispanic or Latino,Female,1962-01-31
+PT000989,Other,Hispanic or Latino,Female,1987-04-16
+PT000990,White,Hispanic or Latino,Male,1941-06-12
+PT000991,White,Not Hispanic or Latino,Female,1961-10-02
+PT000992,Black or African American,Not Hispanic or Latino,Male,1937-02-12
+PT000993,Asian,Not Hispanic or Latino,Female,1967-07-25
+PT000994,Unknown,Not Hispanic or Latino,Male,1961-03-23
+PT000995,Black or African American,Hispanic or Latino,Male,2003-08-11
+PT000996,Unknown,Not Hispanic or Latino,Male,1931-12-12
+PT000997,Black or African American,Hispanic or Latino,Male,1958-04-18
+PT000998,Asian,Not Hispanic or Latino,Male,1963-12-23
+PT000999,White,Hispanic or Latino,Male,2003-07-15
+PT001000,White,Not Hispanic or Latino,Female,1996-02-12

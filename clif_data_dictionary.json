@@ -1,0 +1,284 @@
+{
+    "hospitalization": {
+        "hospitalization_id": {
+            "description": "Unique identifier for each hospitalization",
+            "type": "string",
+            "example": "HOSP000001"
+        },
+        "patient_id": {
+            "description": "Unique patient identifier linking to patient table",
+            "type": "string",
+            "example": "PT000001"
+        },
+        "admission_dttm": {
+            "description": "Hospital admission date and time",
+            "type": "datetime",
+            "example": "2024-06-01 17:14:53"
+        },
+        "discharge_dttm": {
+            "description": "Hospital discharge date and time",
+            "type": "datetime",
+            "example": "2024-06-03 17:14:53"
+        },
+        "admission_source": {
+            "description": "Source of hospital admission",
+            "type": "categorical",
+            "values": ["Emergency Department", "Direct Admission", "Transfer from Another Hospital", "Operating Room"]
+        },
+        "discharge_disposition": {
+            "description": "Discharge outcome/destination",
+            "type": "categorical",
+            "values": ["Home", "Skilled Nursing Facility", "Expired", "Hospice", "Transfer to Another Hospital"]
+        },
+        "age_at_admission": {
+            "description": "Patient age in years at time of admission",
+            "type": "numeric",
+            "range": "0-120"
+        }
+    },
+    "patient": {
+        "patient_id": {
+            "description": "Unique patient identifier",
+            "type": "string",
+            "example": "PT000001"
+        },
+        "race": {
+            "description": "Patient race",
+            "type": "categorical",
+            "values": ["White", "Black or African American", "Asian", "Other", "Unknown"]
+        },
+        "ethnicity": {
+            "description": "Patient ethnicity",
+            "type": "categorical",
+            "values": ["Not Hispanic or Latino", "Hispanic or Latino", "Unknown"]
+        },
+        "sex": {
+            "description": "Patient biological sex",
+            "type": "categorical",
+            "values": ["Male", "Female"]
+        },
+        "date_of_birth": {
+            "description": "Patient date of birth",
+            "type": "date",
+            "example": "1979-04-08"
+        }
+    },
+    "adt": {
+        "hospitalization_id": {
+            "description": "Links to hospitalization",
+            "type": "string"
+        },
+        "in_dttm": {
+            "description": "Unit/location admission time",
+            "type": "datetime"
+        },
+        "out_dttm": {
+            "description": "Unit/location discharge time",
+            "type": "datetime"
+        },
+        "location_category": {
+            "description": "Type of hospital unit/location",
+            "type": "categorical",
+            "values": ["Emergency Department", "ICU", "Ward", "Operating Room"]
+        }
+    },
+    "vitals": {
+        "hospitalization_id": {
+            "description": "Links to hospitalization",
+            "type": "string"
+        },
+        "recorded_dttm": {
+            "description": "Time vital sign was recorded",
+            "type": "datetime"
+        },
+        "vital_category": {
+            "description": "Type of vital sign",
+            "type": "categorical",
+            "values": ["Heart Rate", "Systolic Blood Pressure", "Diastolic Blood Pressure", "Temperature", "SpO2", "Respiratory Rate"]
+        },
+        "vital_value": {
+            "description": "Numeric value of vital sign",
+            "type": "numeric"
+        }
+    },
+    "labs": {
+        "hospitalization_id": {
+            "description": "Links to hospitalization",
+            "type": "string"
+        },
+        "lab_order_dttm": {
+            "description": "Time lab was ordered",
+            "type": "datetime"
+        },
+        "lab_result_dttm": {
+            "description": "Time lab result was available",
+            "type": "datetime"
+        },
+        "lab_category": {
+            "description": "Type of laboratory test",
+            "type": "categorical",
+            "values": ["Hemoglobin", "White Blood Cell Count", "Platelet Count", "Creatinine", "Glucose", "Sodium", "Potassium", "Lactate"]
+        },
+        "lab_value": {
+            "description": "Numeric result of lab test",
+            "type": "numeric"
+        },
+        "lab_unit": {
+            "description": "Unit of measurement for lab",
+            "type": "string",
+            "examples": ["g/dL", "K/uL", "mg/dL", "mEq/L", "mmol/L"]
+        }
+    },
+    "respiratory_support": {
+        "hospitalization_id": {
+            "description": "Links to hospitalization",
+            "type": "string"
+        },
+        "start_dttm": {
+            "description": "Start time of respiratory support",
+            "type": "datetime"
+        },
+        "stop_dttm": {
+            "description": "Stop time of respiratory support",
+            "type": "datetime"
+        },
+        "device_category": {
+            "description": "Type of respiratory support device",
+            "type": "categorical",
+            "values": ["None", "Nasal Cannula", "High Flow Nasal Cannula", "Non-Invasive Ventilation", "Invasive Mechanical Ventilation"]
+        },
+        "fio2": {
+            "description": "Fraction of inspired oxygen (21-100)",
+            "type": "numeric",
+            "range": "21-100"
+        }
+    },
+    "medication_administration": {
+        "hospitalization_id": {
+            "description": "Links to hospitalization",
+            "type": "string"
+        },
+        "admin_dttm": {
+            "description": "Time medication was administered",
+            "type": "datetime"
+        },
+        "medication_name": {
+            "description": "Name of medication",
+            "type": "categorical",
+            "examples": ["Propofol", "Fentanyl", "Norepinephrine", "Vancomycin", "Piperacillin-Tazobactam", "Heparin", "Insulin", "Furosemide"]
+        },
+        "medication_category": {
+            "description": "Class of medication",
+            "type": "categorical",
+            "values": ["Sedative", "Analgesic", "Vasopressor", "Antibiotic", "Anticoagulant", "Hormone", "Diuretic"]
+        },
+        "route": {
+            "description": "Route of administration",
+            "type": "categorical",
+            "values": ["Intravenous", "Oral", "Subcutaneous", "Intramuscular"]
+        },
+        "dose": {
+            "description": "Dose amount",
+            "type": "numeric"
+        },
+        "dose_unit": {
+            "description": "Unit of dose",
+            "type": "string",
+            "examples": ["mg", "mcg", "units", "mg/hr", "mcg/kg/min"]
+        }
+    },
+    "patient_assessments": {
+        "hospitalization_id": {
+            "description": "Links to hospitalization",
+            "type": "string"
+        },
+        "assessment_dttm": {
+            "description": "Time of assessment",
+            "type": "datetime"
+        },
+        "assessment_category": {
+            "description": "Type of assessment",
+            "type": "categorical",
+            "values": ["RASS", "CAM-ICU", "Pain Score"]
+        },
+        "assessment_value": {
+            "description": "Assessment score/value",
+            "type": "numeric",
+            "notes": {
+                "RASS": "Richmond Agitation-Sedation Scale (-5 to +4)",
+                "CAM-ICU": "Confusion Assessment Method (0=negative, 1=positive)",
+                "Pain Score": "Pain scale (0-10)"
+            }
+        }
+    },
+    "position": {
+        "hospitalization_id": {
+            "description": "Links to hospitalization",
+            "type": "string"
+        },
+        "start_dttm": {
+            "description": "Start time of position",
+            "type": "datetime"
+        },
+        "stop_dttm": {
+            "description": "Stop time of position",
+            "type": "datetime"
+        },
+        "position": {
+            "description": "Patient position",
+            "type": "categorical",
+            "values": ["Supine", "Semi-Fowler", "Prone", "Left Lateral", "Right Lateral"]
+        }
+    },
+    "derived_variables": {
+        "mortality": {
+            "description": "Binary indicator of in-hospital death",
+            "calculation": "discharge_disposition == 'Expired'",
+            "type": "binary",
+            "values": [0, 1]
+        },
+        "los_days": {
+            "description": "Hospital length of stay in days",
+            "calculation": "(discharge_dttm - admission_dttm) / 24 hours",
+            "type": "numeric"
+        },
+        "icu_los_days": {
+            "description": "Total ICU length of stay in days",
+            "calculation": "Sum of ICU stays from ADT table",
+            "type": "numeric"
+        },
+        "ventilation": {
+            "description": "Binary indicator of mechanical ventilation",
+            "calculation": "Any respiratory_support with device_category == 'Invasive Mechanical Ventilation'",
+            "type": "binary",
+            "values": [0, 1]
+        },
+        "ventilator_days": {
+            "description": "Total days on mechanical ventilation",
+            "calculation": "Sum of invasive ventilation periods",
+            "type": "numeric"
+        },
+        "vasopressor_use": {
+            "description": "Binary indicator of vasopressor use",
+            "calculation": "Any medication_administration with medication_category == 'Vasopressor'",
+            "type": "binary",
+            "values": [0, 1]
+        },
+        "max_lactate": {
+            "description": "Maximum lactate value during stay",
+            "calculation": "Max of labs where lab_category == 'Lactate'",
+            "type": "numeric"
+        },
+        "max_creatinine": {
+            "description": "Maximum creatinine value during stay",
+            "calculation": "Max of labs where lab_category == 'Creatinine'",
+            "type": "numeric"
+        },
+        "delirium": {
+            "description": "Binary indicator of positive CAM-ICU",
+            "calculation": "Any patient_assessments with assessment_category == 'CAM-ICU' and value == 1",
+            "type": "binary",
+            "values": [0, 1]
+        }
+    }
+}
