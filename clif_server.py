@@ -27,6 +27,7 @@ from server.tools.code_generator import CodeGenerator
 from server.tools.data_explorer import DataExplorer
 from server.tools.ml_model_builder import MLModelBuilder
 from server.tools.comprehensive_dictionary import DynamicCLIFDictionary as ComprehensiveDictionary
+from server.tools.derived_variable_creator import DerivedVariableCreator
 from server.security.privacy_guard import PrivacyGuard
 
 # Configure logging
@@ -53,6 +54,7 @@ class CLIFServer:
         self.data_explorer = DataExplorer(data_path)
         self.ml_model_builder = MLModelBuilder(data_path)
         self.comprehensive_dictionary = ComprehensiveDictionary(data_path)
+        self.derived_variable_creator = DerivedVariableCreator(data_path)
         self.privacy_guard = PrivacyGuard()
         
         # Build data dictionary on startup
@@ -369,6 +371,94 @@ async def list_tools() -> list[Tool]:
                 },
                 "required": ["language"]
             }
+        ),
+        Tool(
+            name="create_derived_variable",
+            description="Create new derived variables from existing data at different levels (timepoint, hospitalization, patient)",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "variable_name": {
+                        "type": "string",
+                        "description": "Name of the new variable to create"
+                    },
+                    "variable_type": {
+                        "type": "string",
+                        "enum": ["binary", "categorical", "numeric", "datetime"],
+                        "description": "Type of the new variable"
+                    },
+                    "level": {
+                        "type": "string",
+                        "enum": ["timepoint", "hospitalization", "patient"],
+                        "description": "Level at which to create the variable"
+                    },
+                    "definition": {
+                        "type": "object",
+                        "description": "Definition of how to create the variable",
+                        "properties": {
+                            "source_table": {
+                                "type": "string",
+                                "description": "Source table for custom variables"
+                            },
+                            "filters": {
+                                "type": "object",
+                                "description": "Filters to apply to source data"
+                            },
+                            "aggregation": {
+                                "type": "object",
+                                "properties": {
+                                    "method": {
+                                        "type": "string",
+                                        "enum": ["count", "sum", "mean", "max", "min", "first", "last"]
+                                    },
+                                    "field": {"type": "string"},
+                                    "group_by": {"type": "string"}
+                                }
+                            },
+                            "transformation": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {"type": "string"},
+                                    "threshold": {"type": "number"},
+                                    "operator": {"type": "string"},
+                                    "values": {"type": "array"}
+                                }
+                            },
+                            "calculation": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": ["ratio", "difference"]
+                                    },
+                                    "numerator": {"type": "string"},
+                                    "denominator": {"type": "string"},
+                                    "var1": {"type": "string"},
+                                    "var2": {"type": "string"},
+                                    "tolerance_minutes": {"type": "number"}
+                                }
+                            }
+                        }
+                    },
+                    "predefined": {
+                        "type": "string",
+                        "enum": ["mortality", "los_days", "icu_los_days", "mechanical_ventilation", 
+                                "ventilator_days", "aki_stage", "max_sofa_score", "total_hospitalizations",
+                                "total_icu_days", "ever_ventilated", "mortality_any_admission", "map", 
+                                "shock_index"],
+                        "description": "Use a predefined common variable instead of custom definition"
+                    }
+                },
+                "required": ["variable_name", "level"]
+            }
+        ),
+        Tool(
+            name="list_derived_variables",
+            description="List available predefined derived variables and their definitions",
+            inputSchema={
+                "type": "object",
+                "properties": {}
+            }
         )
     ]
 
@@ -681,6 +771,79 @@ Clinical Characteristics:
                 f.write(code)
             
             result = f"Generated {language} code saved to: {filepath}\n\nPreview:\n{code[:500]}..."
+            
+            return [TextContent(type="text", text=result)]
+            
+        elif name == "create_derived_variable":
+            variable_name = arguments["variable_name"]
+            level = arguments["level"]
+            variable_type = arguments.get("variable_type", "numeric")
+            
+            # Check if using predefined variable
+            if "predefined" in arguments:
+                # Get definition from predefined variables
+                all_vars = clif_server.derived_variable_creator.get_common_derived_variables()
+                
+                # Find the predefined variable
+                definition = {}
+                for level_vars in all_vars.values():
+                    if arguments["predefined"] in level_vars:
+                        var_info = level_vars[arguments["predefined"]]
+                        variable_type = var_info["type"]
+                        level = var_info["level"]
+                        break
+                
+                # Create the predefined variable
+                result_df = clif_server.derived_variable_creator.create_derived_variable(
+                    arguments["predefined"], variable_type, level, definition
+                )
+            else:
+                # Use custom definition
+                definition = arguments.get("definition", {})
+                result_df = clif_server.derived_variable_creator.create_derived_variable(
+                    variable_name, variable_type, level, definition
+                )
+            
+            # Format result
+            result = f"Created derived variable: {variable_name}\n"
+            result += f"Level: {level}\n"
+            result += f"Type: {variable_type}\n"
+            result += f"Records created: {len(result_df)}\n\n"
+            
+            # Show sample
+            if len(result_df) > 0:
+                result += "Sample values:\n"
+                result += result_df.head(10).to_string()
+            
+            # Update current cohort if it's a hospitalization-level variable
+            if level == "hospitalization" and current_cohort is not None:
+                current_cohort = current_cohort.merge(
+                    result_df, on="hospitalization_id", how="left"
+                )
+                result += "\n\nVariable added to current cohort."
+            
+            return [TextContent(type="text", text=clif_server.privacy_guard.sanitize_output(result))]
+            
+        elif name == "list_derived_variables":
+            # Get all predefined variables
+            all_vars = clif_server.derived_variable_creator.get_common_derived_variables()
+            
+            result = "PREDEFINED DERIVED VARIABLES\n"
+            result += "=" * 50 + "\n\n"
+            
+            for level_name, variables in all_vars.items():
+                result += f"{level_name.upper()}:\n"
+                result += "-" * 30 + "\n"
+                
+                for var_name, var_info in variables.items():
+                    result += f"  • {var_name}: {var_info['description']}\n"
+                    result += f"    Type: {var_info['type']}, Level: {var_info['level']}\n"
+                
+                result += "\n"
+            
+            result += "\nTo use a predefined variable:\n"
+            result += '{"variable_name": "my_mortality", "level": "hospitalization", "predefined": "mortality"}\n\n'
+            result += "To create a custom variable, provide a definition instead of predefined."
             
             return [TextContent(type="text", text=result)]
             
