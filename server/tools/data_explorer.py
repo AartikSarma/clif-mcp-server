@@ -8,12 +8,15 @@ import numpy as np
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 import json
+from .comprehensive_dictionary import initialize_dictionary, get_dictionary
 
 
 class DataExplorer:
     def __init__(self, data_path: str):
         self.data_path = Path(data_path)
         self.tables = self._discover_tables()
+        # Initialize the dynamic dictionary
+        initialize_dictionary(str(self.data_path))
         
     def _discover_tables(self) -> List[str]:
         """Discover available CLIF tables"""
@@ -233,3 +236,31 @@ class DataExplorer:
             linkage['error'] = str(e)
         
         return linkage
+    
+    def get_variable_dictionary(self, table_name: Optional[str] = None,
+                               variable_name: Optional[str] = None) -> Dict[str, Any]:
+        """Get variable information from the dynamic dictionary"""
+        dictionary = get_dictionary()
+        if dictionary:
+            return dictionary.get_variable_info(table_name, variable_name)
+        return {}
+    
+    def list_available_variables(self) -> Dict[str, List[str]]:
+        """List all available variables organized by table"""
+        dictionary = get_dictionary()
+        if dictionary:
+            result = {}
+            # Get raw variables from each table
+            for table_name in dictionary.tables:
+                result[table_name] = list(dictionary.variable_info.get(table_name, {}).keys())
+            # Add derived variables
+            result['derived_variables'] = dictionary.get_derived_variable_names()
+            return result
+        return {}
+    
+    def suggest_analysis_variables(self, analysis_type: str) -> Dict[str, Any]:
+        """Suggest variables for specific analysis types based on available data"""
+        dictionary = get_dictionary()
+        if dictionary:
+            return dictionary.suggest_variables_for_analysis(analysis_type)
+        return {}

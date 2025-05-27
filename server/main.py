@@ -17,6 +17,7 @@ from .tools.cohort_builder import CohortBuilder
 from .tools.outcomes_analyzer import OutcomesAnalyzer
 from .tools.code_generator import CodeGenerator
 from .tools.data_explorer import DataExplorer
+from .tools.ml_model_builder import MLModelBuilder
 from .security.privacy_guard import PrivacyGuard
 
 # Configure logging
@@ -35,6 +36,7 @@ class CLIFServer:
         self.outcomes_analyzer = OutcomesAnalyzer(data_path)
         self.code_generator = CodeGenerator()
         self.data_explorer = DataExplorer(data_path)
+        self.ml_model_builder = MLModelBuilder(data_path)
         
         # Register MCP tools
         self._register_tools()
@@ -198,6 +200,85 @@ class CLIFServer:
                 }
             )
         
+        @self.server.tool()
+        async def get_variable_dictionary() -> List[Tool]:
+            """Get information about available variables in the dataset"""
+            return Tool(
+                name="get_variable_dictionary",
+                description="Get dynamic information about variables available in the CLIF dataset",
+                input_schema={
+                    "type": "object",
+                    "properties": {
+                        "table_name": {
+                            "type": "string",
+                            "description": "Specific table to get variables for (optional)"
+                        },
+                        "variable_name": {
+                            "type": "string",
+                            "description": "Specific variable to get information about (optional)"
+                        },
+                        "analysis_type": {
+                            "type": "string",
+                            "description": "Get suggested variables for analysis type (mortality_prediction, los_prediction, delirium_risk)",
+                            "enum": ["mortality_prediction", "los_prediction", "delirium_risk"]
+                        }
+                    }
+                }
+            )
+        
+        @self.server.tool()
+        async def build_ml_model() -> List[Tool]:
+            """Build machine learning models for clinical prediction"""
+            return Tool(
+                name="build_ml_model",
+                description="Build flexible ML models for predicting clinical outcomes",
+                input_schema={
+                    "type": "object",
+                    "properties": {
+                        "outcome": {
+                            "type": "string",
+                            "description": "Target variable to predict (e.g., mortality, los, readmission)"
+                        },
+                        "features": {
+                            "type": "array",
+                            "description": "List of feature columns to use",
+                            "items": {"type": "string"}
+                        },
+                        "model_type": {
+                            "type": "string",
+                            "description": "Model type (auto, logistic_regression, random_forest, etc.)",
+                            "default": "auto"
+                        },
+                        "cohort_id": {
+                            "type": "string",
+                            "description": "Optional cohort ID to use for modeling"
+                        },
+                        "feature_selection": {
+                            "type": "object",
+                            "description": "Feature selection configuration",
+                            "properties": {
+                                "method": {
+                                    "type": "string",
+                                    "enum": ["kbest", "mutual_info", "rfe"]
+                                },
+                                "n_features": {"type": "integer"}
+                            }
+                        },
+                        "hyperparameter_tuning": {
+                            "type": "boolean",
+                            "default": True,
+                            "description": "Whether to tune hyperparameters"
+                        },
+                        "validation_split": {
+                            "type": "number",
+                            "default": 0.2,
+                            "description": "Test set proportion"
+                        }
+                    },
+                    "required": ["outcome", "features"]
+                }
+            )
+        
         # Tool implementations
         @self.server.call_tool()
         async def call_tool(name: str, arguments: Dict[str, Any]) -> List[ToolResult]:
@@ -229,6 +310,22 @@ class CLIFServer:
                         arguments.get("language", "python"),
                         arguments.get("include_visualizations", True),
                         arguments.get("output_format", "script")
+                    )
+                elif name == "get_variable_dictionary":
+                    result = await self._get_variable_dictionary(
+                        arguments.get("table_name"),
+                        arguments.get("variable_name"),
+                        arguments.get("analysis_type")
+                    )
+                elif name == "build_ml_model":
+                    result = await self._build_ml_model(
+                        arguments["outcome"],
+                        arguments["features"],
+                        arguments.get("model_type", "auto"),
+                        arguments.get("cohort_id"),
+                        arguments.get("feature_selection"),
+                        arguments.get("hyperparameter_tuning", True),
+                        arguments.get("validation_split", 0.2)
                     )
                 else:
                     result = f"Unknown tool: {name}"
@@ -301,6 +398,153 @@ class CLIFServer:
             f.write(code)
         
         return f"Analysis code generated: {output_path}\n\n{code[:500]}..."
+    
+    async def _build_ml_model(self, outcome: str, features: List[str],
+                             model_type: str, cohort_id: Optional[str],
+                             feature_selection: Optional[Dict],
+                             hyperparameter_tuning: bool,
+                             validation_split: float) -> str:
+        """Build ML model for clinical prediction"""
+        
+        # Load data
+        if cohort_id:
+            # Load specific cohort
+            df = self.cohort_builder.load_cohort(cohort_id)
+        else:
+            # Load all patient data
+            patient_df = pd.read_csv(self.data_path / "patient.csv")
+            hospitalization_df = pd.read_csv(self.data_path / "hospitalization.csv")
+            
+            # Merge for basic features
+            df = patient_df.merge(hospitalization_df, on="patient_id")
+        
+        # Build model
+        result = self.ml_model_builder.build_model(
+            df=df,
+            outcome=outcome,
+            features=features,
+            model_type=model_type,
+            feature_selection=feature_selection,
+            hyperparameter_tuning=hyperparameter_tuning,
+            validation_split=validation_split
+        )
+        
+        # Format results with privacy protection
+        summary = f"ML Model Built Successfully\n"
+        summary += f"Model ID: {result['model_id']}\n"
+        summary += f"Model Type: {result['model_type']}\n"
+        summary += f"Task: {result['task']}\n"
+        summary += f"Number of samples: {result['n_samples']}\n"
+        summary += f"Number of features: {result['n_features']}\n\n"
+        
+        summary += "Performance Metrics:\n"
+        summary += "Training:\n"
+        for metric, value in result['performance']['train'].items():
+            summary += f"  - {metric}: {value:.3f}\n"
+        
+        summary += "\nTest:\n"
+        for metric, value in result['performance']['test'].items():
+            summary += f"  - {metric}: {value:.3f}\n"
+        
+        # Feature importance (top 10)
+        if result['feature_importance']:
+            summary += "\nTop 10 Important Features:\n"
+            for i, (feature, importance) in enumerate(list(result['feature_importance'].items())[:10]):
+                summary += f"  {i+1}. {feature}: {importance:.3f}\n"
+        
+        # Generate model report
+        model_report = self.ml_model_builder.generate_model_report(result['model_id'])
+        
+        # Store for code generation
+        self.code_generator.store_analysis({
+            'type': 'ml_model',
+            'model_info': result,
+            'report': model_report
+        })
+        
+        return self.privacy_guard.sanitize_output(summary)
+    
+    async def _get_variable_dictionary(self, table_name: Optional[str] = None,
+                                      variable_name: Optional[str] = None,
+                                      analysis_type: Optional[str] = None) -> str:
+        """Get dynamic variable information from the dataset"""
+        
+        if analysis_type:
+            # Get suggested variables for analysis type
+            suggestions = self.data_explorer.suggest_analysis_variables(analysis_type)
+            output = f"Suggested variables for {analysis_type}:\n\n"
+            
+            if suggestions.get("outcome"):
+                output += f"Outcome variable: {suggestions['outcome']}\n"
+            else:
+                output += f"Outcome variable: Not available\n"
+                
+            if suggestions.get("predictors"):
+                output += f"Predictor variables:\n"
+                for predictor in suggestions["predictors"]:
+                    output += f"  - {predictor}\n"
+            else:
+                output += "No suitable predictor variables found\n"
+                
+            if suggestions.get("note"):
+                output += f"\nNote: {suggestions['note']}\n"
+                
+            return output
+            
+        elif variable_name and table_name:
+            # Get specific variable info
+            info = self.data_explorer.get_variable_dictionary(table_name, variable_name)
+            if not info:
+                return f"Variable '{variable_name}' not found in table '{table_name}'"
+                
+            output = f"Variable: {table_name}.{variable_name}\n"
+            output += f"Description: {info.get('description', 'N/A')}\n"
+            output += f"Type: {info.get('type', 'unknown')}\n"
+            
+            if info.get('values'):
+                output += f"Values: {', '.join(str(v) for v in info['values'][:10])}"
+                if len(info['values']) > 10:
+                    output += f" ... and {len(info['values']) - 10} more"
+                output += "\n"
+                
+            if info.get('min') is not None:
+                output += f"Range: {info['min']} - {info['max']}\n"
+                
+            if info.get('completeness') is not None:
+                output += f"Completeness: {info['completeness']*100:.1f}%\n"
+                
+            return output
+            
+        elif table_name:
+            # Get all variables for a table
+            info = self.data_explorer.get_variable_dictionary(table_name)
+            if not info:
+                return f"Table '{table_name}' not found"
+                
+            output = f"Variables in {table_name} table:\n\n"
+            for var_name, var_info in info.items():
+                output += f"  {var_name}:\n"
+                output += f"    Type: {var_info.get('type', 'unknown')}\n"
+                output += f"    Description: {var_info.get('description', 'N/A')}\n"
+                if var_info.get('completeness') is not None:
+                    output += f"    Completeness: {var_info['completeness']*100:.1f}%\n"
+                output += "\n"
+                
+            return output
+            
+        else:
+            # List all available variables
+            variables = self.data_explorer.list_available_variables()
+            output = "Available variables in CLIF dataset:\n\n"
+            
+            for table, var_list in variables.items():
+                if var_list:
+                    output += f"{table.upper()}:\n"
+                    for var in sorted(var_list):
+                        output += f"  - {var}\n"
+                    output += "\n"
+                    
+            return output
     
     async def run(self):
         """Run the MCP server"""

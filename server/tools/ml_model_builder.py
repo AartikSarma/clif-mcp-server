@@ -1,6 +1,6 @@
 """
 Machine Learning Model Builder for CLIF MCP Server
-Supports various ML models for clinical prediction tasks
+Flexible ML tool for clinical prediction with user-defined outcomes and features
 """
 
 import pandas as pd
@@ -13,30 +13,48 @@ import joblib
 import warnings
 warnings.filterwarnings('ignore')
 
-# ML imports
+# Core ML imports
 from sklearn.model_selection import (
     train_test_split, cross_val_score, StratifiedKFold, 
-    TimeSeriesSplit, GridSearchCV, RandomizedSearchCV
+    KFold, GridSearchCV, RandomizedSearchCV
 )
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
 from sklearn.impute import SimpleImputer, KNNImputer
 from sklearn.metrics import (
+    # Classification metrics
     roc_auc_score, average_precision_score, accuracy_score,
+    precision_score, recall_score, f1_score,
     precision_recall_curve, roc_curve, confusion_matrix,
+    classification_report, brier_score_loss,
+    # Regression metrics
     mean_squared_error, mean_absolute_error, r2_score,
-    brier_score_loss
+    mean_absolute_percentage_error, explained_variance_score
 )
-try:
-    from sklearn.calibration import calibration_curve, CalibratedClassifierCV
-except ImportError:
-    # Older sklearn versions might not have calibration_curve
-    calibration_curve = None
-    from sklearn.calibration import CalibratedClassifierCV
-from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.linear_model import LogisticRegression, Ridge, Lasso, ElasticNet
-from sklearn.svm import SVC, SVR
 
-# Advanced ML
+# Models
+from sklearn.linear_model import (
+    LogisticRegression, Ridge, Lasso, ElasticNet,
+    SGDClassifier, SGDRegressor
+)
+from sklearn.ensemble import (
+    RandomForestClassifier, RandomForestRegressor,
+    GradientBoostingClassifier, GradientBoostingRegressor,
+    AdaBoostClassifier, AdaBoostRegressor,
+    ExtraTreesClassifier, ExtraTreesRegressor
+)
+from sklearn.svm import SVC, SVR
+from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+
+# Feature selection
+from sklearn.feature_selection import (
+    SelectKBest, f_classif, f_regression,
+    RFE, RFECV, SelectFromModel,
+    chi2, mutual_info_classif, mutual_info_regression
+)
+
+# Optional advanced libraries
 try:
     import xgboost as xgb
     HAS_XGBOOST = True
@@ -50,219 +68,146 @@ except ImportError:
     HAS_LIGHTGBM = False
 
 try:
-    import shap
-    HAS_SHAP = True
+    from sklearn.neural_network import MLPClassifier, MLPRegressor
+    HAS_NEURAL = True
 except ImportError:
-    HAS_SHAP = False
-
-# Survival analysis
-try:
-    from lifelines import CoxPHFitter, KaplanMeierFitter
-    from lifelines.utils import concordance_index
-    HAS_LIFELINES = True
-except ImportError:
-    HAS_LIFELINES = False
-
-# Imbalanced learning
-try:
-    from imblearn.over_sampling import SMOTE, ADASYN
-    from imblearn.pipeline import Pipeline as ImbPipeline
-    HAS_IMBLEARN = True
-except ImportError:
-    HAS_IMBLEARN = False
+    HAS_NEURAL = False
 
 
 class MLModelBuilder:
+    """Flexible ML model builder for clinical outcomes prediction"""
+    
+    # Available models by task
+    CLASSIFICATION_MODELS = {
+        'logistic_regression': LogisticRegression,
+        'random_forest': RandomForestClassifier,
+        'gradient_boosting': GradientBoostingClassifier,
+        'extra_trees': ExtraTreesClassifier,
+        'svm': SVC,
+        'knn': KNeighborsClassifier,
+        'naive_bayes': GaussianNB,
+        'decision_tree': DecisionTreeClassifier,
+        'adaboost': AdaBoostClassifier,
+        'sgd': SGDClassifier
+    }
+    
+    REGRESSION_MODELS = {
+        'linear_regression': Ridge,
+        'lasso': Lasso,
+        'elastic_net': ElasticNet,
+        'random_forest': RandomForestRegressor,
+        'gradient_boosting': GradientBoostingRegressor,
+        'extra_trees': ExtraTreesRegressor,
+        'svm': SVR,
+        'knn': KNeighborsRegressor,
+        'decision_tree': DecisionTreeRegressor,
+        'adaboost': AdaBoostRegressor,
+        'sgd': SGDRegressor
+    }
+    
     def __init__(self, data_path: str = None):
         self.data_path = Path(data_path) if data_path else None
         self.models = {}
         self.results = {}
-        self.feature_importance = {}
-        self.shap_values = {}
+        self.preprocessors = {}
         
-    def prepare_features(self, 
-                        df: pd.DataFrame,
-                        feature_list: List[str],
-                        outcome: str,
-                        task: str,
-                        handle_missing: str = 'impute',
-                        scale_features: bool = True,
-                        create_interactions: bool = False,
-                        temporal_features: Dict[str, Any] = None) -> Tuple[pd.DataFrame, pd.Series, List[str]]:
-        """Prepare features for ML modeling"""
+        # Add optional models if available
+        if HAS_XGBOOST:
+            self.CLASSIFICATION_MODELS['xgboost'] = xgb.XGBClassifier
+            self.REGRESSION_MODELS['xgboost'] = xgb.XGBRegressor
         
-        # Extract features and outcome
-        df_work = df.copy()
-        
-        # Create temporal features if specified
-        if temporal_features:
-            df_work = self._create_temporal_features(df_work, temporal_features)
-            # Add new temporal features to feature list
-            feature_list.extend([f for f in df_work.columns if f.startswith('temporal_') and f not in feature_list])
-        
-        # Handle missing data
-        if handle_missing == 'drop':
-            df_work = df_work.dropna(subset=feature_list + [outcome])
-        elif handle_missing == 'impute':
-            # Separate numeric and categorical
-            numeric_features = df_work[feature_list].select_dtypes(include=[np.number]).columns.tolist()
-            categorical_features = df_work[feature_list].select_dtypes(include=['object']).columns.tolist()
+        if HAS_LIGHTGBM:
+            self.CLASSIFICATION_MODELS['lightgbm'] = lgb.LGBMClassifier
+            self.REGRESSION_MODELS['lightgbm'] = lgb.LGBMRegressor
             
-            if numeric_features:
-                imputer = SimpleImputer(strategy='median')
-                df_work[numeric_features] = imputer.fit_transform(df_work[numeric_features])
-            
-            if categorical_features:
-                imputer_cat = SimpleImputer(strategy='most_frequent')
-                df_work[categorical_features] = imputer_cat.fit_transform(df_work[categorical_features])
-        elif handle_missing == 'indicator':
-            # Add missingness indicators
-            for col in feature_list:
-                if df_work[col].isnull().any():
-                    df_work[f'{col}_missing'] = df_work[col].isnull().astype(int)
-                    feature_list.append(f'{col}_missing')
-            
-            # Then impute
-            df_work = df_work.fillna(df_work.median())
-        
-        # Create dummy variables for categorical features
-        categorical_features = df_work[feature_list].select_dtypes(include=['object']).columns.tolist()
-        if categorical_features:
-            df_work = pd.get_dummies(df_work, columns=categorical_features, drop_first=True)
-            # Update feature list
-            feature_list = [f for f in df_work.columns if f != outcome and any(f.startswith(cat) for cat in feature_list)]
-        
-        # Create interaction terms if requested
-        if create_interactions:
-            numeric_features = [f for f in feature_list if f in df_work.columns and df_work[f].dtype in [np.float64, np.int64]]
-            for i, feat1 in enumerate(numeric_features):
-                for feat2 in numeric_features[i+1:]:
-                    interaction_name = f"{feat1}_x_{feat2}"
-                    df_work[interaction_name] = df_work[feat1] * df_work[feat2]
-                    feature_list.append(interaction_name)
-        
-        # Extract final features and outcome
-        X = df_work[feature_list]
-        y = df_work[outcome]
-        
-        # Scale features if requested
-        if scale_features:
-            scaler = StandardScaler()
-            X_scaled = pd.DataFrame(
-                scaler.fit_transform(X),
-                columns=X.columns,
-                index=X.index
-            )
-            X = X_scaled
-        
-        return X, y, feature_list
+        if HAS_NEURAL:
+            self.CLASSIFICATION_MODELS['neural_network'] = MLPClassifier
+            self.REGRESSION_MODELS['neural_network'] = MLPRegressor
     
-    def _create_temporal_features(self, df: pd.DataFrame, temporal_config: Dict[str, Any]) -> pd.DataFrame:
-        """Create temporal features from time-series data"""
+    def build_model(self,
+                   df: pd.DataFrame,
+                   outcome: str,
+                   features: List[str],
+                   model_type: str = 'auto',
+                   task: str = 'auto',
+                   validation_split: float = 0.2,
+                   cv_folds: int = 5,
+                   feature_selection: Optional[Dict[str, Any]] = None,
+                   preprocessing: Optional[Dict[str, Any]] = None,
+                   hyperparameter_tuning: bool = True,
+                   random_state: int = 42) -> Dict[str, Any]:
+        """
+        Build ML model with flexible configuration
         
-        # Example temporal features:
-        # - Trends (slope over time)
-        # - Variability (std dev)
-        # - Change from baseline
-        # - Time since event
+        Args:
+            df: Input dataframe
+            outcome: Target variable name
+            features: List of feature column names
+            model_type: Model to use ('auto' for automatic selection)
+            task: 'classification' or 'regression' ('auto' to infer)
+            validation_split: Test set size
+            cv_folds: Number of CV folds
+            feature_selection: Feature selection config
+            preprocessing: Preprocessing config
+            hyperparameter_tuning: Whether to tune hyperparameters
+            random_state: Random seed
         
-        for feature_name, config in temporal_config.items():
-            source_col = config.get('source_column')
-            feature_type = config.get('type', 'trend')
-            window = config.get('window', 24)  # hours
-            
-            if feature_type == 'trend':
-                # Calculate linear trend over window
-                df[f'temporal_trend_{source_col}_{window}h'] = np.nan  # Placeholder
-            elif feature_type == 'variability':
-                # Calculate std dev over window
-                df[f'temporal_std_{source_col}_{window}h'] = np.nan  # Placeholder
-            elif feature_type == 'change_from_baseline':
-                # Calculate change from first value
-                df[f'temporal_change_{source_col}'] = np.nan  # Placeholder
+        Returns:
+            Dictionary with model results and metadata
+        """
         
-        return df
-    
-    def fit_model(self,
-                  df: pd.DataFrame,
-                  model_type: str,
-                  task: str,
-                  outcome: str,
-                  features: List[str],
-                  validation_strategy: str = 'cv',
-                  test_size: float = 0.2,
-                  cv_folds: int = 5,
-                  hyperparameter_tuning: bool = False,
-                  handle_imbalance: str = 'none',
-                  handle_missing: str = 'impute',
-                  scale_features: bool = True,
-                  calibrate: bool = False,
-                  interpretability: bool = True,
-                  random_state: int = 42) -> Dict[str, Any]:
-        """Fit ML model with specified configuration"""
+        # Infer task if auto
+        if task == 'auto':
+            task = self._infer_task(df[outcome])
         
-        # Prepare features
-        X, y, feature_names = self.prepare_features(
-            df, features, outcome, task, handle_missing, scale_features
+        # Prepare data
+        X, y, feature_names, preprocessor = self._prepare_data(
+            df, features, outcome, preprocessing, task
         )
         
-        # Handle class imbalance for classification
-        if task == 'classification' and handle_imbalance != 'none':
-            X, y = self._handle_imbalance(X, y, method=handle_imbalance, random_state=random_state)
-        
-        # Split data based on validation strategy
-        if validation_strategy == 'holdout':
-            X_train, X_test, y_train, y_test = train_test_split(
-                X, y, test_size=test_size, random_state=random_state, stratify=y if task == 'classification' else None
+        # Feature selection if requested
+        if feature_selection:
+            X, feature_names = self._select_features(
+                X, y, feature_names, task, feature_selection
             )
-        elif validation_strategy == 'temporal':
-            # Temporal split - use last portion as test
-            split_idx = int(len(X) * (1 - test_size))
-            X_train, X_test = X.iloc[:split_idx], X.iloc[split_idx:]
-            y_train, y_test = y.iloc[:split_idx], y.iloc[split_idx:]
-        else:  # cv
-            X_train, X_test = X, X
-            y_train, y_test = y, y
         
-        # Get model
+        # Split data
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=validation_split, random_state=random_state,
+            stratify=y if task == 'classification' else None
+        )
+        
+        # Select model
+        if model_type == 'auto':
+            model_type = self._select_best_model(X_train, y_train, task, cv_folds)
+        
+        # Get and configure model
         model = self._get_model(model_type, task, random_state)
         
-        # Hyperparameter tuning if requested
+        # Hyperparameter tuning
         if hyperparameter_tuning:
             model = self._tune_hyperparameters(
-                model, X_train, y_train, task, cv_folds, random_state
+                model, X_train, y_train, task, cv_folds
             )
         
-        # Fit model
-        if validation_strategy == 'cv':
-            # Cross-validation
-            cv = StratifiedKFold(n_splits=cv_folds, shuffle=True, random_state=random_state) if task == 'classification' else cv_folds
-            scores = cross_val_score(
-                model, X_train, y_train, cv=cv,
-                scoring='roc_auc' if task == 'classification' else 'neg_mean_squared_error'
-            )
-            model.fit(X_train, y_train)  # Fit on full training data
-        else:
-            model.fit(X_train, y_train)
+        # Train model
+        model.fit(X_train, y_train)
         
-        # Calibrate if requested (classification only)
-        if task == 'classification' and calibrate:
-            model = CalibratedClassifierCV(model, method='sigmoid', cv=3)
-            model.fit(X_train, y_train)
-        
-        # Evaluate model
+        # Evaluate
         results = self._evaluate_model(
-            model, X_test, y_test, X_train, y_train, task, feature_names
+            model, X_train, X_test, y_train, y_test, task
         )
         
-        # Add interpretability
-        if interpretability:
-            self._add_interpretability(model, X_train, feature_names, task)
+        # Add feature importance
+        feature_importance = self._get_feature_importance(
+            model, feature_names, X_train, y_train
+        )
         
-        # Store model and results
+        # Store model
         model_id = f"{model_type}_{outcome}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         self.models[model_id] = {
             'model': model,
+            'preprocessor': preprocessor,
             'feature_names': feature_names,
             'task': task,
             'outcome': outcome,
@@ -272,341 +217,423 @@ class MLModelBuilder:
         
         return {
             'model_id': model_id,
-            'results': results,
-            'feature_importance': self.feature_importance.get(model_id, {}),
-            'model_info': {
-                'type': model_type,
-                'task': task,
-                'outcome': outcome,
-                'n_features': len(feature_names),
-                'n_samples_train': len(X_train),
-                'n_samples_test': len(X_test)
+            'model_type': model_type,
+            'task': task,
+            'performance': {
+                'train': results['train_scores'],
+                'test': results['test_scores']
+            },
+            'feature_importance': feature_importance,
+            'n_samples': len(X),
+            'n_features': len(feature_names),
+            'outcome_distribution': {
+                'unique_values': y.nunique() if task == 'classification' else None,
+                'mean': float(y.mean()) if task == 'regression' else None,
+                'std': float(y.std()) if task == 'regression' else None
             }
         }
     
+    def _infer_task(self, y: pd.Series) -> str:
+        """Infer whether task is classification or regression"""
+        # Check if binary
+        if y.nunique() == 2:
+            return 'classification'
+        
+        # Check if integer with few unique values (likely classification)
+        if y.dtype in ['int64', 'int32'] and y.nunique() < 10:
+            return 'classification'
+        
+        # Check if categorical
+        if y.dtype == 'object' or y.dtype.name == 'category':
+            return 'classification'
+        
+        # Otherwise assume regression
+        return 'regression'
+    
+    def _prepare_data(self, 
+                     df: pd.DataFrame,
+                     features: List[str],
+                     outcome: str,
+                     preprocessing: Optional[Dict[str, Any]],
+                     task: str) -> Tuple[np.ndarray, pd.Series, List[str], Any]:
+        """Prepare data for modeling"""
+        
+        # Default preprocessing
+        if preprocessing is None:
+            preprocessing = {
+                'handle_missing': 'impute',
+                'scaling': 'standard',
+                'encode_categorical': True
+            }
+        
+        df_work = df[features + [outcome]].copy()
+        
+        # Handle missing values
+        if preprocessing.get('handle_missing') == 'drop':
+            df_work = df_work.dropna()
+        elif preprocessing.get('handle_missing') == 'impute':
+            # Separate numeric and categorical
+            numeric_cols = df_work[features].select_dtypes(include=[np.number]).columns
+            categorical_cols = df_work[features].select_dtypes(include=['object', 'category']).columns
+            
+            # Impute numeric
+            if len(numeric_cols) > 0:
+                imputer = SimpleImputer(strategy='median')
+                df_work[numeric_cols] = imputer.fit_transform(df_work[numeric_cols])
+            
+            # Impute categorical
+            if len(categorical_cols) > 0:
+                imputer_cat = SimpleImputer(strategy='most_frequent')
+                df_work[categorical_cols] = imputer_cat.fit_transform(df_work[categorical_cols])
+        
+        # Encode categorical variables
+        if preprocessing.get('encode_categorical', True):
+            categorical_cols = df_work[features].select_dtypes(include=['object', 'category']).columns
+            if len(categorical_cols) > 0:
+                df_work = pd.get_dummies(df_work, columns=categorical_cols, drop_first=True)
+                # Update feature list
+                features = [col for col in df_work.columns if col != outcome]
+        
+        # Extract features and target
+        X = df_work[features].values
+        y = df_work[outcome]
+        
+        # Scale features
+        scaler = None
+        scaling = preprocessing.get('scaling', 'standard')
+        if scaling == 'standard':
+            scaler = StandardScaler()
+            X = scaler.fit_transform(X)
+        elif scaling == 'minmax':
+            scaler = MinMaxScaler()
+            X = scaler.fit_transform(X)
+        elif scaling == 'robust':
+            scaler = RobustScaler()
+            X = scaler.fit_transform(X)
+        
+        return X, y, features, scaler
+    
+    def _select_features(self,
+                        X: np.ndarray,
+                        y: pd.Series,
+                        feature_names: List[str],
+                        task: str,
+                        config: Dict[str, Any]) -> Tuple[np.ndarray, List[str]]:
+        """Select features based on configuration"""
+        
+        method = config.get('method', 'kbest')
+        n_features = config.get('n_features', 10)
+        
+        if method == 'kbest':
+            if task == 'classification':
+                selector = SelectKBest(f_classif, k=min(n_features, X.shape[1]))
+            else:
+                selector = SelectKBest(f_regression, k=min(n_features, X.shape[1]))
+        
+        elif method == 'mutual_info':
+            if task == 'classification':
+                selector = SelectKBest(mutual_info_classif, k=min(n_features, X.shape[1]))
+            else:
+                selector = SelectKBest(mutual_info_regression, k=min(n_features, X.shape[1]))
+        
+        elif method == 'rfe':
+            base_estimator = RandomForestClassifier(n_estimators=50) if task == 'classification' else RandomForestRegressor(n_estimators=50)
+            selector = RFE(base_estimator, n_features_to_select=n_features)
+        
+        else:
+            return X, feature_names
+        
+        # Fit selector
+        X_selected = selector.fit_transform(X, y)
+        
+        # Get selected feature names
+        mask = selector.get_support()
+        selected_features = [f for f, m in zip(feature_names, mask) if m]
+        
+        return X_selected, selected_features
+    
+    def _select_best_model(self, X: np.ndarray, y: pd.Series, task: str, cv_folds: int) -> str:
+        """Automatically select best model based on CV performance"""
+        
+        models_to_try = {}
+        if task == 'classification':
+            models_to_try = {
+                'logistic_regression': LogisticRegression(max_iter=1000),
+                'random_forest': RandomForestClassifier(n_estimators=100),
+                'gradient_boosting': GradientBoostingClassifier(n_estimators=100)
+            }
+            scoring = 'roc_auc' if y.nunique() == 2 else 'f1_weighted'
+        else:
+            models_to_try = {
+                'linear_regression': Ridge(),
+                'random_forest': RandomForestRegressor(n_estimators=100),
+                'gradient_boosting': GradientBoostingRegressor(n_estimators=100)
+            }
+            scoring = 'neg_mean_squared_error'
+        
+        best_score = -np.inf
+        best_model = 'random_forest'
+        
+        for name, model in models_to_try.items():
+            try:
+                scores = cross_val_score(model, X, y, cv=cv_folds, scoring=scoring)
+                avg_score = scores.mean()
+                
+                if avg_score > best_score:
+                    best_score = avg_score
+                    best_model = name
+            except:
+                continue
+        
+        return best_model
+    
     def _get_model(self, model_type: str, task: str, random_state: int):
-        """Get model instance based on type and task"""
+        """Get model instance"""
         
         if task == 'classification':
-            if model_type == 'logistic_regression':
-                return LogisticRegression(random_state=random_state, max_iter=1000)
-            elif model_type == 'random_forest':
-                return RandomForestClassifier(n_estimators=100, random_state=random_state)
-            elif model_type == 'xgboost' and HAS_XGBOOST:
-                return xgb.XGBClassifier(random_state=random_state, use_label_encoder=False, eval_metric='logloss')
-            elif model_type == 'lightgbm' and HAS_LIGHTGBM:
-                return lgb.LGBMClassifier(random_state=random_state, verbosity=-1)
-            elif model_type == 'svm':
-                return SVC(probability=True, random_state=random_state)
-            else:
-                raise ValueError(f"Unknown classification model type: {model_type}")
-                
-        elif task == 'regression':
-            if model_type == 'linear_regression':
-                return Ridge(random_state=random_state)
-            elif model_type == 'random_forest':
-                return RandomForestRegressor(n_estimators=100, random_state=random_state)
-            elif model_type == 'xgboost' and HAS_XGBOOST:
-                return xgb.XGBRegressor(random_state=random_state)
-            elif model_type == 'lightgbm' and HAS_LIGHTGBM:
-                return lgb.LGBMRegressor(random_state=random_state, verbosity=-1)
-            elif model_type == 'svm':
-                return SVR()
-            else:
-                raise ValueError(f"Unknown regression model type: {model_type}")
+            model_class = self.CLASSIFICATION_MODELS.get(model_type)
         else:
-            raise ValueError(f"Unknown task: {task}")
+            model_class = self.REGRESSION_MODELS.get(model_type)
+        
+        if model_class is None:
+            raise ValueError(f"Unknown model type: {model_type} for task: {task}")
+        
+        # Configure model with sensible defaults
+        kwargs = {'random_state': random_state} if 'random_state' in model_class.__init__.__code__.co_varnames else {}
+        
+        # Special configurations
+        if model_type == 'svm':
+            kwargs['probability'] = True if task == 'classification' else False
+        elif model_type in ['xgboost', 'lightgbm']:
+            kwargs['verbosity'] = 0
+        elif model_type == 'neural_network':
+            kwargs['hidden_layer_sizes'] = (100, 50)
+            kwargs['max_iter'] = 1000
+        
+        return model_class(**kwargs)
     
-    def _handle_imbalance(self, X: pd.DataFrame, y: pd.Series, method: str, random_state: int) -> Tuple[pd.DataFrame, pd.Series]:
-        """Handle class imbalance"""
+    def _tune_hyperparameters(self, model, X: np.ndarray, y: pd.Series, task: str, cv_folds: int):
+        """Tune hyperparameters using GridSearchCV"""
         
-        if not HAS_IMBLEARN:
-            print("Warning: imblearn not installed, skipping imbalance handling")
-            return X, y
-        
-        if method == 'smote':
-            sampler = SMOTE(random_state=random_state)
-        elif method == 'adasyn':
-            sampler = ADASYN(random_state=random_state)
-        else:
-            return X, y
-        
-        X_resampled, y_resampled = sampler.fit_resample(X, y)
-        
-        # Convert back to DataFrame/Series
-        X_resampled = pd.DataFrame(X_resampled, columns=X.columns)
-        y_resampled = pd.Series(y_resampled, name=y.name)
-        
-        return X_resampled, y_resampled
-    
-    def _tune_hyperparameters(self, model, X_train, y_train, task, cv_folds, random_state):
-        """Tune hyperparameters using grid search"""
-        
-        # Define parameter grids
+        # Define parameter grids for common models
         param_grids = {
             'RandomForestClassifier': {
-                'n_estimators': [100, 200],
-                'max_depth': [5, 10, None],
-                'min_samples_split': [2, 5],
-                'min_samples_leaf': [1, 2]
+                'n_estimators': [50, 100, 200],
+                'max_depth': [None, 10, 20],
+                'min_samples_split': [2, 5]
             },
             'RandomForestRegressor': {
-                'n_estimators': [100, 200],
-                'max_depth': [5, 10, None],
-                'min_samples_split': [2, 5],
-                'min_samples_leaf': [1, 2]
+                'n_estimators': [50, 100, 200],
+                'max_depth': [None, 10, 20],
+                'min_samples_split': [2, 5]
             },
-            'XGBClassifier': {
-                'n_estimators': [100, 200],
-                'max_depth': [3, 5, 7],
+            'GradientBoostingClassifier': {
+                'n_estimators': [50, 100, 200],
                 'learning_rate': [0.01, 0.1],
-                'subsample': [0.8, 1.0]
+                'max_depth': [3, 5]
             },
-            'XGBRegressor': {
-                'n_estimators': [100, 200],
-                'max_depth': [3, 5, 7],
+            'GradientBoostingRegressor': {
+                'n_estimators': [50, 100, 200],
                 'learning_rate': [0.01, 0.1],
-                'subsample': [0.8, 1.0]
+                'max_depth': [3, 5]
             },
             'LogisticRegression': {
                 'C': [0.001, 0.01, 0.1, 1, 10],
-                'penalty': ['l1', 'l2'],
-                'solver': ['liblinear']
+                'penalty': ['l2']
+            },
+            'Ridge': {
+                'alpha': [0.001, 0.01, 0.1, 1, 10]
             }
         }
         
-        model_class = type(model).__name__
-        if model_class in param_grids:
-            grid_search = GridSearchCV(
-                model,
-                param_grids[model_class],
-                cv=cv_folds,
-                scoring='roc_auc' if task == 'classification' else 'neg_mean_squared_error',
-                n_jobs=-1
-            )
-            grid_search.fit(X_train, y_train)
-            return grid_search.best_estimator_
+        model_name = type(model).__name__
+        if model_name not in param_grids:
+            return model
         
-        return model
+        scoring = 'roc_auc' if task == 'classification' and y.nunique() == 2 else None
+        
+        grid_search = GridSearchCV(
+            model,
+            param_grids[model_name],
+            cv=min(cv_folds, 3),  # Use fewer folds for speed
+            scoring=scoring,
+            n_jobs=-1
+        )
+        
+        grid_search.fit(X, y)
+        return grid_search.best_estimator_
     
-    def _evaluate_model(self, model, X_test, y_test, X_train, y_train, task, feature_names):
-        """Evaluate model performance"""
+    def _evaluate_model(self, model, X_train, X_test, y_train, y_test, task):
+        """Comprehensive model evaluation"""
         
         results = {
             'train_scores': {},
-            'test_scores': {},
-            'predictions': {},
-            'feature_names': feature_names
+            'test_scores': {}
         }
         
         if task == 'classification':
             # Predictions
             y_pred_train = model.predict(X_train)
             y_pred_test = model.predict(X_test)
-            y_pred_proba_train = model.predict_proba(X_train)[:, 1]
-            y_pred_proba_test = model.predict_proba(X_test)[:, 1]
             
-            # Metrics
-            results['train_scores'] = {
-                'accuracy': accuracy_score(y_train, y_pred_train),
-                'auc_roc': roc_auc_score(y_train, y_pred_proba_train),
-                'auc_pr': average_precision_score(y_train, y_pred_proba_train),
-                'brier_score': brier_score_loss(y_train, y_pred_proba_train)
-            }
+            # Probabilities (if available)
+            if hasattr(model, 'predict_proba'):
+                y_proba_train = model.predict_proba(X_train)
+                y_proba_test = model.predict_proba(X_test)
+                
+                # For binary classification
+                if y_train.nunique() == 2:
+                    results['train_scores']['auc_roc'] = roc_auc_score(y_train, y_proba_train[:, 1])
+                    results['test_scores']['auc_roc'] = roc_auc_score(y_test, y_proba_test[:, 1])
+                    results['train_scores']['auc_pr'] = average_precision_score(y_train, y_proba_train[:, 1])
+                    results['test_scores']['auc_pr'] = average_precision_score(y_test, y_proba_test[:, 1])
             
-            results['test_scores'] = {
-                'accuracy': accuracy_score(y_test, y_pred_test),
-                'auc_roc': roc_auc_score(y_test, y_pred_proba_test),
-                'auc_pr': average_precision_score(y_test, y_pred_proba_test),
-                'brier_score': brier_score_loss(y_test, y_pred_proba_test)
-            }
+            # Standard metrics
+            results['train_scores']['accuracy'] = accuracy_score(y_train, y_pred_train)
+            results['test_scores']['accuracy'] = accuracy_score(y_test, y_pred_test)
+            results['train_scores']['precision'] = precision_score(y_train, y_pred_train, average='weighted')
+            results['test_scores']['precision'] = precision_score(y_test, y_pred_test, average='weighted')
+            results['train_scores']['recall'] = recall_score(y_train, y_pred_train, average='weighted')
+            results['test_scores']['recall'] = recall_score(y_test, y_pred_test, average='weighted')
+            results['train_scores']['f1'] = f1_score(y_train, y_pred_train, average='weighted')
+            results['test_scores']['f1'] = f1_score(y_test, y_pred_test, average='weighted')
             
             # Confusion matrix
             results['confusion_matrix'] = confusion_matrix(y_test, y_pred_test).tolist()
             
-            # ROC and PR curves
-            fpr, tpr, _ = roc_curve(y_test, y_pred_proba_test)
-            precision, recall, _ = precision_recall_curve(y_test, y_pred_proba_test)
-            
-            results['roc_curve'] = {'fpr': fpr.tolist(), 'tpr': tpr.tolist()}
-            results['pr_curve'] = {'precision': precision.tolist(), 'recall': recall.tolist()}
-            
-            # Calibration (if available)
-            if calibration_curve is not None:
-                fraction_pos, mean_pred = calibration_curve(y_test, y_pred_proba_test, n_bins=10)
-                results['calibration_curve'] = {
-                    'fraction_positive': fraction_pos.tolist(),
-                    'mean_predicted': mean_pred.tolist()
-                }
-            
-        elif task == 'regression':
+        else:  # Regression
             # Predictions
             y_pred_train = model.predict(X_train)
             y_pred_test = model.predict(X_test)
             
             # Metrics
-            results['train_scores'] = {
-                'rmse': np.sqrt(mean_squared_error(y_train, y_pred_train)),
-                'mae': mean_absolute_error(y_train, y_pred_train),
-                'r2': r2_score(y_train, y_pred_train)
-            }
-            
-            results['test_scores'] = {
-                'rmse': np.sqrt(mean_squared_error(y_test, y_pred_test)),
-                'mae': mean_absolute_error(y_test, y_pred_test),
-                'r2': r2_score(y_test, y_pred_test)
-            }
-            
-            # Residuals
-            residuals = y_test - y_pred_test
-            results['residuals'] = {
-                'values': residuals.tolist(),
-                'mean': float(np.mean(residuals)),
-                'std': float(np.std(residuals))
-            }
+            results['train_scores']['rmse'] = np.sqrt(mean_squared_error(y_train, y_pred_train))
+            results['test_scores']['rmse'] = np.sqrt(mean_squared_error(y_test, y_pred_test))
+            results['train_scores']['mae'] = mean_absolute_error(y_train, y_pred_train)
+            results['test_scores']['mae'] = mean_absolute_error(y_test, y_pred_test)
+            results['train_scores']['r2'] = r2_score(y_train, y_pred_train)
+            results['test_scores']['r2'] = r2_score(y_test, y_pred_test)
+            results['train_scores']['explained_variance'] = explained_variance_score(y_train, y_pred_train)
+            results['test_scores']['explained_variance'] = explained_variance_score(y_test, y_pred_test)
         
         return results
     
-    def _add_interpretability(self, model, X_train, feature_names, task):
-        """Add model interpretability"""
+    def _get_feature_importance(self, model, feature_names: List[str], X: np.ndarray, y: pd.Series) -> Dict[str, float]:
+        """Extract feature importance from model"""
         
-        model_type = type(model).__name__
+        importance_dict = {}
         
-        # Feature importance for tree-based models
+        # Tree-based models
         if hasattr(model, 'feature_importances_'):
-            importance = model.feature_importances_
-            feature_importance = dict(zip(feature_names, importance))
-            # Sort by importance
-            feature_importance = dict(sorted(feature_importance.items(), key=lambda x: x[1], reverse=True))
-            self.feature_importance[model_type] = feature_importance
+            importances = model.feature_importances_
+            importance_dict = dict(zip(feature_names, importances))
         
-        # SHAP values if available
-        if HAS_SHAP and len(X_train) < 10000:  # Limit for computational reasons
-            try:
-                if model_type in ['RandomForestClassifier', 'RandomForestRegressor', 'XGBClassifier', 'XGBRegressor']:
-                    explainer = shap.TreeExplainer(model)
-                    shap_values = explainer.shap_values(X_train)
-                    
-                    # For classification, take values for positive class
-                    if task == 'classification' and len(shap_values) == 2:
-                        shap_values = shap_values[1]
-                    
-                    # Store summary
-                    self.shap_values[model_type] = {
-                        'values': shap_values[:100].tolist() if hasattr(shap_values, 'tolist') else shap_values[:100],  # Limit size
-                        'base_value': float(explainer.expected_value[1] if task == 'classification' else explainer.expected_value),
-                        'feature_names': feature_names
-                    }
-            except Exception as e:
-                print(f"Could not compute SHAP values: {e}")
+        # Linear models
+        elif hasattr(model, 'coef_'):
+            # For binary classification, coef_ might be 2D
+            coef = model.coef_
+            if coef.ndim > 1:
+                coef = coef[0]
+            importance_dict = dict(zip(feature_names, np.abs(coef)))
+        
+        # Sort by importance
+        importance_dict = dict(sorted(importance_dict.items(), key=lambda x: x[1], reverse=True))
+        
+        return importance_dict
     
-    def predict(self, model_id: str, X: pd.DataFrame) -> np.ndarray:
-        """Make predictions with a trained model"""
+    def predict(self, model_id: str, df: pd.DataFrame) -> np.ndarray:
+        """Make predictions with trained model"""
         
         if model_id not in self.models:
             raise ValueError(f"Model {model_id} not found")
         
         model_info = self.models[model_id]
         model = model_info['model']
+        preprocessor = model_info.get('preprocessor')
+        feature_names = model_info['feature_names']
         
-        # Ensure features match
-        expected_features = model_info['feature_names']
-        X = X[expected_features]
+        # Prepare features
+        X = df[feature_names].values
+        
+        # Apply preprocessing if available
+        if preprocessor:
+            X = preprocessor.transform(X)
         
         return model.predict(X)
     
-    def predict_proba(self, model_id: str, X: pd.DataFrame) -> np.ndarray:
-        """Get prediction probabilities for classification models"""
+    def save_model(self, model_id: str, filepath: str):
+        """Save model and metadata"""
+        
+        if model_id not in self.models:
+            raise ValueError(f"Model {model_id} not found")
+        
+        save_data = {
+            'model_info': self.models[model_id],
+            'results': self.results.get(model_id, {})
+        }
+        
+        joblib.dump(save_data, filepath)
+        
+    def generate_model_report(self, model_id: str) -> str:
+        """Generate comprehensive model report"""
         
         if model_id not in self.models:
             raise ValueError(f"Model {model_id} not found")
         
         model_info = self.models[model_id]
-        if model_info['task'] != 'classification':
-            raise ValueError("predict_proba only available for classification models")
+        results = self.results[model_id]
         
-        model = model_info['model']
-        expected_features = model_info['feature_names']
-        X = X[expected_features]
+        report = f"""
+Machine Learning Model Report
+============================
+
+Model ID: {model_id}
+Model Type: {model_info['model_type']}
+Task: {model_info['task']}
+Outcome: {model_info['outcome']}
+Number of Features: {len(model_info['feature_names'])}
+
+Performance Metrics
+------------------
+"""
         
-        return model.predict_proba(X)
-    
-    def save_model(self, model_id: str, filepath: str):
-        """Save model to disk"""
+        # Add performance metrics
+        if model_info['task'] == 'classification':
+            report += f"""
+Training Performance:
+- Accuracy: {results['train_scores']['accuracy']:.3f}
+- Precision: {results['train_scores']['precision']:.3f}
+- Recall: {results['train_scores']['recall']:.3f}
+- F1 Score: {results['train_scores']['f1']:.3f}
+"""
+            if 'auc_roc' in results['train_scores']:
+                report += f"- AUC-ROC: {results['train_scores']['auc_roc']:.3f}\n"
+                report += f"- AUC-PR: {results['train_scores']['auc_pr']:.3f}\n"
+            
+            report += f"""
+Test Performance:
+- Accuracy: {results['test_scores']['accuracy']:.3f}
+- Precision: {results['test_scores']['precision']:.3f}
+- Recall: {results['test_scores']['recall']:.3f}
+- F1 Score: {results['test_scores']['f1']:.3f}
+"""
+            if 'auc_roc' in results['test_scores']:
+                report += f"- AUC-ROC: {results['test_scores']['auc_roc']:.3f}\n"
+                report += f"- AUC-PR: {results['test_scores']['auc_pr']:.3f}\n"
         
-        if model_id not in self.models:
-            raise ValueError(f"Model {model_id} not found")
+        else:  # Regression
+            report += f"""
+Training Performance:
+- RMSE: {results['train_scores']['rmse']:.3f}
+- MAE: {results['train_scores']['mae']:.3f}
+- R²: {results['train_scores']['r2']:.3f}
+- Explained Variance: {results['train_scores']['explained_variance']:.3f}
+
+Test Performance:
+- RMSE: {results['test_scores']['rmse']:.3f}
+- MAE: {results['test_scores']['mae']:.3f}
+- R²: {results['test_scores']['r2']:.3f}
+- Explained Variance: {results['test_scores']['explained_variance']:.3f}
+"""
         
-        model_data = {
-            'model': self.models[model_id],
-            'results': self.results.get(model_id, {}),
-            'feature_importance': self.feature_importance.get(model_id, {}),
-            'shap_values': self.shap_values.get(model_id, {})
-        }
-        
-        joblib.dump(model_data, filepath)
-        
-    def load_model(self, filepath: str) -> str:
-        """Load model from disk"""
-        
-        model_data = joblib.load(filepath)
-        
-        # Generate new model_id
-        model_id = f"loaded_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-        
-        self.models[model_id] = model_data['model']
-        self.results[model_id] = model_data.get('results', {})
-        self.feature_importance[model_id] = model_data.get('feature_importance', {})
-        self.shap_values[model_id] = model_data.get('shap_values', {})
-        
-        return model_id
-    
-    def get_clinical_risk_scores(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Calculate standard clinical risk scores"""
-        
-        scores = pd.DataFrame(index=df.index)
-        
-        # SOFA Score (simplified)
-        if all(col in df.columns for col in ['pao2_fio2_ratio', 'platelets', 'bilirubin', 'map', 'gcs', 'creatinine']):
-            scores['sofa_score'] = self._calculate_sofa(df)
-        
-        # APACHE II (simplified)
-        if all(col in df.columns for col in ['temperature', 'map', 'heart_rate', 'respiratory_rate', 'pao2', 'ph', 'sodium', 'potassium', 'creatinine', 'hematocrit', 'wbc', 'gcs', 'age']):
-            scores['apache_ii'] = self._calculate_apache_ii(df)
-        
-        return scores
-    
-    def _calculate_sofa(self, df: pd.DataFrame) -> pd.Series:
-        """Calculate simplified SOFA score"""
-        sofa = pd.Series(0, index=df.index)
-        
-        # Respiration
-        pf_ratio = df.get('pao2_fio2_ratio', 400)
-        sofa += (pf_ratio < 400).astype(int)
-        sofa += (pf_ratio < 300).astype(int)
-        sofa += (pf_ratio < 200).astype(int)
-        sofa += (pf_ratio < 100).astype(int)
-        
-        # Coagulation
-        platelets = df.get('platelets', 150)
-        sofa += (platelets < 150).astype(int)
-        sofa += (platelets < 100).astype(int)
-        sofa += (platelets < 50).astype(int)
-        sofa += (platelets < 20).astype(int)
-        
-        # Add other components similarly...
-        
-        return sofa
-    
-    def _calculate_apache_ii(self, df: pd.DataFrame) -> pd.Series:
-        """Calculate simplified APACHE II score"""
-        apache = pd.Series(0, index=df.index)
-        
-        # Temperature points
-        temp = df.get('temperature', 37)
-        apache += np.where(temp >= 41, 4, 0)
-        apache += np.where((temp >= 39) & (temp < 41), 3, 0)
-        
-        # Add other components similarly...
-        
-        return apache
+        return report
