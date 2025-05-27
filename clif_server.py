@@ -63,8 +63,8 @@ class CLIFServer:
         global data_dictionary
         
         try:
-            # Get basic dictionary
-            data_dictionary = self.comprehensive_dictionary.build_dictionary()
+            # Get the dictionary info from comprehensive_dictionary
+            data_dictionary = self.comprehensive_dictionary.get_variable_info()
             
             # Add actual categorical values from data
             categorical_values = {}
@@ -167,12 +167,8 @@ async def list_tools() -> list[Tool]:
                     },
                     "outcomes": {
                         "type": "array",
-                        "items": {
-                            "type": "string",
-                            "enum": ["mortality", "icu_mortality", "hospital_mortality",
-                                   "icu_los", "hospital_los", "ventilator_days",
-                                   "readmission_30d", "aki", "delirium"]
-                        }
+                        "description": "Outcomes to analyze (e.g., mortality, icu_los, hospital_los, ventilator_days, or any numeric column)",
+                        "items": {"type": "string"}
                     },
                     "stratify_by": {
                         "type": "array",
@@ -192,6 +188,7 @@ async def list_tools() -> list[Tool]:
                     "cohort2_id": {"type": "string"},
                     "outcomes": {
                         "type": "array",
+                        "description": "Outcomes to compare between cohorts",
                         "items": {"type": "string"}
                     },
                     "adjustment_method": {
@@ -315,25 +312,56 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
     
     try:
         if name == "show_data_dictionary":
-            # Format the data dictionary nicely
-            result = "COMPREHENSIVE CLIF DATA DICTIONARY\n"
-            result += "=" * 50 + "\n\n"
+            # Ensure data dictionary is built
+            if not data_dictionary:
+                clif_server._build_data_dictionary()
             
-            if data_dictionary:
-                for table_name, variables in data_dictionary.items():
-                    if isinstance(variables, dict) and not table_name.startswith('_'):
-                        result += f"\n{table_name.upper()} TABLE:\n"
-                        result += "-" * 30 + "\n"
+            # Get fresh data from comprehensive dictionary
+            all_info = clif_server.comprehensive_dictionary.get_variable_info()
+            
+            result = "COMPREHENSIVE CLIF DATA DICTIONARY\n"
+            result += "=" * 50 + "\n"
+            
+            # Show regular tables
+            for table_name, variables in all_info.items():
+                if isinstance(variables, dict) and table_name != 'derived_variables':
+                    result += f"\n{table_name.upper()} TABLE:\n"
+                    result += "-" * 30 + "\n"
+                    if variables:
                         for var_name, var_info in variables.items():
                             if isinstance(var_info, dict):
                                 var_type = var_info.get('type', 'unknown')
                                 desc = var_info.get('description', '')
                                 result += f"  • {var_name} ({var_type}): {desc}\n"
-            else:
-                result = "Data dictionary not available. Building now...\n"
-                clif_server._build_data_dictionary()
-                result += "Please try again."
+                    else:
+                        result += "  (No variables found in this table)\n"
             
+            # Show derived variables
+            if 'derived_variables' in all_info:
+                result += "\nDERIVED VARIABLES:\n"
+                result += "-" * 30 + "\n"
+                for var_name, var_info in all_info['derived_variables'].items():
+                    if isinstance(var_info, dict) and var_info.get('available', False):
+                        var_type = var_info.get('type', 'unknown')
+                        desc = var_info.get('description', '')
+                        result += f"  • {var_name} ({var_type}): {desc}\n"
+            
+            # Add categorical values if available
+            if data_dictionary and 'actual_categorical_values' in data_dictionary:
+                result += "\nCATEGORICAL VALUE EXAMPLES:\n"
+                result += "-" * 30 + "\n"
+                for var_path, values in list(data_dictionary['actual_categorical_values'].items())[:10]:
+                    if values:
+                        result += f"  • {var_path}: {', '.join(str(v) for v in values[:5])}\n"
+                        if len(values) > 5:
+                            result += f"    ... and {len(values) - 5} more values\n"
+            
+            if not all_info or (isinstance(all_info, dict) and not any(v for k, v in all_info.items() if k != 'derived_variables')):
+                result += "\nNote: No data dictionary found. This may be because:\n"
+                result += "1. The data path is incorrect\n"
+                result += "2. The CSV files are not in the expected format\n"
+                result += "3. The tables are empty\n"
+                
             return [TextContent(type="text", text=result)]
             
         elif name == "explore_data":
