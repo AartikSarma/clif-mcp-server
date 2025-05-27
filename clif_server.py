@@ -9,16 +9,13 @@ import logging
 import sys
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
-from datetime import datetime
 import argparse
 
 import pandas as pd
-import numpy as np
 
-from mcp.server import Server
-from mcp.server.stdio import stdio_server
-from mcp.types import Tool, TextContent
+from mcp.server import Server  # type: ignore
+from mcp.server.stdio import stdio_server  # type: ignore
+from mcp.types import Tool, TextContent  # type: ignore
 
 # Import all tool classes
 from server.tools.cohort_builder import CohortBuilder
