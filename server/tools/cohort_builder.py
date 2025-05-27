@@ -83,10 +83,15 @@ class CohortBuilder:
             cohort = self._exclude_readmissions(cohort)
             cohort_filters.append("no_readmit")
         
+        # Lab-based criteria (e.g., AKI, sepsis biomarkers)
+        if 'lab_criteria' in criteria and criteria['lab_criteria']:
+            lab_ids = self._filter_by_lab_criteria(criteria['lab_criteria'])
+            cohort = cohort[cohort['hospitalization_id'].isin(lab_ids)]
+            cohort_filters.append("lab_criteria")
+        
         # Additional filters can be added here:
         # - Specific diagnoses (when diagnosis table available)
         # - Procedures
-        # - Lab value ranges
         # - Severity scores
         
         # Generate cohort ID
@@ -146,6 +151,167 @@ class CohortBuilder:
         )
         
         return list(meds[mask]['hospitalization_id'].unique())
+    
+    def _get_numeric_lab_value(self, lab_row):
+        """Extract numeric value from lab row, handling different column names"""
+        if 'lab_value_numeric' in lab_row.index:
+            return lab_row['lab_value_numeric']
+        elif 'lab_value' in lab_row.index:
+            try:
+                return float(lab_row['lab_value'])
+            except:
+                return None
+        return None
+    
+    def _filter_by_lab_criteria(self, lab_criteria: List[Dict[str, Any]]) -> List[str]:
+        """
+        Filter hospitalizations by lab criteria with time windows
+        
+        Example lab_criteria:
+        [
+            {
+                'lab_name': 'Creatinine',
+                'condition': 'increase',  # 'increase', 'decrease', 'above', 'below', 'between'
+                'value': 1.5,  # threshold or factor for increase/decrease
+                'time_window_hours': 48,  # look within this time window
+                'baseline_window_hours': 24  # for 'increase'/'decrease', baseline period
+            }
+        ]
+        """
+        labs = self.tables['labs']
+        valid_hosp_ids = set()
+        
+        for criterion in lab_criteria:
+            lab_name = criterion['lab_name']
+            condition = criterion['condition']
+            
+            # Filter to specific lab - check both possible column names
+            if 'lab_name' in labs.columns:
+                lab_data = labs[labs['lab_name'].str.contains(lab_name, case=False, na=False)]
+            elif 'lab_category' in labs.columns:
+                lab_data = labs[labs['lab_category'].str.contains(lab_name, case=False, na=False)]
+            else:
+                continue  # Skip if neither column exists
+            
+            if condition == 'increase':
+                # For AKI: creatinine increase of 1.5x or 0.3 mg/dL within 48h
+                factor = criterion.get('value', 1.5)
+                time_window = criterion.get('time_window_hours', 48)
+                baseline_window = criterion.get('baseline_window_hours', 24)
+                
+                for hosp_id in lab_data['hospitalization_id'].unique():
+                    hosp_labs = lab_data[lab_data['hospitalization_id'] == hosp_id].sort_values('lab_result_dttm')
+                    
+                    if len(hosp_labs) < 2:
+                        continue
+                    
+                    # Check each lab value against baseline
+                    for idx in range(1, len(hosp_labs)):
+                        current_time = hosp_labs.iloc[idx]['lab_result_dttm']
+                        # Get numeric value - check both possible column names
+                        if 'lab_value_numeric' in hosp_labs.columns:
+                            current_value = hosp_labs.iloc[idx]['lab_value_numeric']
+                        elif 'lab_value' in hosp_labs.columns:
+                            try:
+                                current_value = float(hosp_labs.iloc[idx]['lab_value'])
+                            except:
+                                continue  # Skip non-numeric values
+                        else:
+                            continue
+                        
+                        # Get baseline (earliest value in baseline window)
+                        baseline_start = current_time - pd.Timedelta(hours=time_window)
+                        baseline_end = current_time - pd.Timedelta(hours=baseline_window)
+                        
+                        baseline_labs = hosp_labs[
+                            (hosp_labs['lab_result_dttm'] >= baseline_start) &
+                            (hosp_labs['lab_result_dttm'] <= baseline_end)
+                        ]
+                        
+                        if not baseline_labs.empty:
+                            # Get baseline value with column name check
+                            if 'lab_value_numeric' in baseline_labs.columns:
+                                baseline_value = baseline_labs['lab_value_numeric'].min()
+                            else:
+                                baseline_value = baseline_labs['lab_value'].astype(float).min()
+                            
+                            # Check if increase meets criteria
+                            if criterion.get('absolute_increase'):
+                                if current_value - baseline_value >= criterion['absolute_increase']:
+                                    valid_hosp_ids.add(hosp_id)
+                                    break
+                            else:
+                                if current_value >= baseline_value * factor:
+                                    valid_hosp_ids.add(hosp_id)
+                                    break
+            
+            elif condition == 'above':
+                threshold = criterion['value']
+                time_window = criterion.get('time_window_hours')
+                
+                for hosp_id in lab_data['hospitalization_id'].unique():
+                    hosp_labs = lab_data[lab_data['hospitalization_id'] == hosp_id]
+                    
+                    # If time window specified, only look within that window from admission
+                    if time_window:
+                        hosp_info = self.tables['hospitalization'][
+                            self.tables['hospitalization']['hospitalization_id'] == hosp_id
+                        ].iloc[0]
+                        admission_time = hosp_info['admission_dttm']
+                        window_end = admission_time + pd.Timedelta(hours=time_window)
+                        
+                        hosp_labs = hosp_labs[
+                            (hosp_labs['lab_result_dttm'] >= admission_time) &
+                            (hosp_labs['lab_result_dttm'] <= window_end)
+                        ]
+                    
+                    # Check if any value exceeds threshold
+                    has_high_value = False
+                    for _, row in hosp_labs.iterrows():
+                        value = self._get_numeric_lab_value(row)
+                        if value is not None and value > threshold:
+                            has_high_value = True
+                            break
+                    
+                    if has_high_value:
+                        valid_hosp_ids.add(hosp_id)
+            
+            elif condition == 'below':
+                threshold = criterion['value']
+                
+                for hosp_id in lab_data['hospitalization_id'].unique():
+                    hosp_labs = lab_data[lab_data['hospitalization_id'] == hosp_id]
+                    
+                    # Check if any value is below threshold
+                    has_low_value = False
+                    for _, row in hosp_labs.iterrows():
+                        value = self._get_numeric_lab_value(row)
+                        if value is not None and value < threshold:
+                            has_low_value = True
+                            break
+                    
+                    if has_low_value:
+                        valid_hosp_ids.add(hosp_id)
+            
+            elif condition == 'between':
+                min_val = criterion['min_value']
+                max_val = criterion['max_value']
+                
+                for hosp_id in lab_data['hospitalization_id'].unique():
+                    hosp_labs = lab_data[lab_data['hospitalization_id'] == hosp_id]
+                    
+                    # Check if any value is in range
+                    has_value_in_range = False
+                    for _, row in hosp_labs.iterrows():
+                        value = self._get_numeric_lab_value(row)
+                        if value is not None and min_val <= value <= max_val:
+                            has_value_in_range = True
+                            break
+                    
+                    if has_value_in_range:
+                        valid_hosp_ids.add(hosp_id)
+        
+        return list(valid_hosp_ids)
     
     def _exclude_readmissions(self, cohort: pd.DataFrame) -> pd.DataFrame:
         """Exclude readmissions, keeping only index admissions"""

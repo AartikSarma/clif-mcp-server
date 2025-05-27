@@ -144,7 +144,67 @@ async def list_tools() -> list[Tool]:
                             },
                             "exclude_readmissions": {"type": "boolean"},
                             "diagnoses": {"type": "array", "items": {"type": "string"}},
-                            "medications": {"type": "array", "items": {"type": "string"}}
+                            "medications": {"type": "array", "items": {"type": "string"}},
+                            "lab_criteria": {
+                                "type": "array",
+                                "description": "Lab-based criteria for identifying clinical conditions using time-series lab data",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "lab_name": {
+                                            "type": "string",
+                                            "description": "Lab test name from labs table (e.g., 'Creatinine', 'Lactate', 'Platelet')"
+                                        },
+                                        "condition": {
+                                            "type": "string",
+                                            "enum": ["increase", "decrease", "above", "below", "between"],
+                                            "description": "Type of condition to check in the time-series data"
+                                        },
+                                        "value": {
+                                            "type": "number",
+                                            "description": "For 'above'/'below': threshold value. For 'increase'/'decrease': multiplication factor (e.g., 1.5 for 50% increase)"
+                                        },
+                                        "absolute_increase": {
+                                            "type": "number",
+                                            "description": "Alternative to multiplication factor - absolute increase amount (e.g., 0.3 for creatinine)"
+                                        },
+                                        "time_window_hours": {
+                                            "type": "number",
+                                            "description": "Time window to check for the condition (e.g., 48 hours)",
+                                            "default": 48
+                                        },
+                                        "baseline_window_hours": {
+                                            "type": "number",
+                                            "description": "For 'increase'/'decrease': how far back to look for baseline value",
+                                            "default": 168
+                                        },
+                                        "min_value": {
+                                            "type": "number",
+                                            "description": "For 'between' condition: minimum value"
+                                        },
+                                        "max_value": {
+                                            "type": "number",
+                                            "description": "For 'between' condition: maximum value"
+                                        }
+                                    },
+                                    "required": ["lab_name", "condition"],
+                                    "examples": [
+                                        {
+                                            "description": "AKI by creatinine increase",
+                                            "lab_name": "Creatinine",
+                                            "condition": "increase",
+                                            "value": 1.5,
+                                            "time_window_hours": 48
+                                        },
+                                        {
+                                            "description": "Elevated lactate",
+                                            "lab_name": "Lactate",
+                                            "condition": "above",
+                                            "value": 2.0
+                                        }
+                                    ]
+                                }
+                            }
                         }
                     },
                     "save_cohort": {
