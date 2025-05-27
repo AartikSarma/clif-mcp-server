@@ -97,6 +97,14 @@ async def list_tools() -> list[Tool]:
     
     return [
         Tool(
+            name="get_data_context",
+            description="Get essential context about available data including tables, variables, and common values - use this FIRST before building cohorts",
+            inputSchema={
+                "type": "object",
+                "properties": {}
+            }
+        ),
+        Tool(
             name="show_data_dictionary",
             description="Show comprehensive data dictionary with all available variables",
             inputSchema={
@@ -371,7 +379,41 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
     global current_cohort, last_regression_config
     
     try:
-        if name == "show_data_dictionary":
+        if name == "get_data_context":
+            # Build a concise summary of available data
+            result = "CLIF DATA CONTEXT\n"
+            result += "=" * 50 + "\n\n"
+            
+            # Available tables
+            result += "AVAILABLE TABLES:\n"
+            for table in clif_server.data_explorer.tables:
+                result += f"  • {table}\n"
+            
+            # Key lab tests
+            result += "\nKEY LAB TESTS:\n"
+            lab_df = pd.read_csv(clif_server.data_path / "labs.csv", nrows=1000)
+            if 'lab_category' in lab_df.columns:
+                lab_tests = lab_df['lab_category'].unique()
+                for test in sorted(lab_tests)[:15]:
+                    result += f"  • {test}\n"
+            
+            # Key medications
+            result += "\nCOMMON MEDICATIONS:\n"
+            med_df = pd.read_csv(clif_server.data_path / "medication_administration.csv", nrows=1000)
+            if 'medication_name' in med_df.columns:
+                meds = med_df['medication_name'].value_counts().head(10)
+                for med in meds.index[:10]:
+                    result += f"  • {med}\n"
+            
+            result += "\nCOHORT BUILDING TIPS:\n"
+            result += "- Age criteria: use age_range with min/max\n"
+            result += "- Lab criteria: specify lab_name, condition (above/below/increase), value, and time_window_hours\n"
+            result += "- Medications: list medication names to filter by\n"
+            result += "- Ventilation: set require_mechanical_ventilation to true/false\n"
+            
+            return [TextContent(type="text", text=result)]
+            
+        elif name == "show_data_dictionary":
             # Ensure data dictionary is built
             if not data_dictionary:
                 clif_server._build_data_dictionary()
@@ -433,8 +475,31 @@ async def call_tool(name: str, arguments: dict) -> list[TextContent]:
             criteria = arguments["criteria"]
             save_cohort = arguments.get("save_cohort", False)
             
+            # Include helpful context about available variables
+            available_labs = []
+            if 'labs' in data_dictionary:
+                available_labs = list(data_dictionary['labs'].keys())
+            
             cohort_df, cohort_id = clif_server.cohort_builder.build_cohort(criteria)
             current_cohort = cohort_df
+            
+            if len(cohort_df) == 0:
+                result = f"""No patients found matching the specified criteria.
+
+Criteria used: {json.dumps(criteria, indent=2)}
+
+Available lab tests in the data: {', '.join(available_labs[:10])}
+For lab criteria, use format:
+{{
+    "lab_criteria": [{{
+        "lab_name": "Creatinine",
+        "condition": "above",
+        "value": 1.5,
+        "time_window_hours": 24
+    }}]
+}}
+"""
+                return [TextContent(type="text", text=result)]
             
             if save_cohort:
                 clif_server.cohort_builder.save_cohort(cohort_id, cohort_df, criteria)
@@ -453,8 +518,8 @@ Demographics:
 
 Clinical Characteristics:
 - Mortality rate: {chars['clinical']['mortality_rate']:.1%}
-- Mean ICU LOS: {chars['clinical']['mean_icu_los']:.1f} days
-- Mechanical ventilation: {chars['clinical']['mechanical_ventilation_rate']:.1%}
+- Mean ICU LOS: {chars['clinical']['icu_los_mean']:.1f} days
+- Mechanical ventilation: {chars['clinical']['ventilation_rate']:.1%}
 """
             
             return [TextContent(type="text", text=clif_server.privacy_guard.sanitize_output(result))]
