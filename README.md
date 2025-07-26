@@ -1,6 +1,6 @@
 # CLIF MCP Server
 
-A Model Context Protocol (MCP) server for AI-assisted clinical research using the Common Longitudinal ICU Format (CLIF) datasets.
+A Model Context Protocol (MCP) server for AI-assisted clinical research using flexible database schemas. Supports the Common Longitudinal ICU Format (CLIF) and any custom clinical database structure through configuration files.
 
 ## Overview
 
@@ -37,7 +37,11 @@ cd clif-mcp-server
 pip install -r requirements.txt
 ```
 
-3. Generate synthetic test data:
+3. Prepare your schema configuration:
+   - Use the provided `schema_config.json` for CLIF format data
+   - Or create a custom schema file for your database structure (see `examples/custom_schema_example.json`)
+
+4. (Optional) Generate synthetic test data:
 ```bash
 python synthetic_data/clif_generator.py
 ```
@@ -47,7 +51,12 @@ python synthetic_data/clif_generator.py
 ### Starting the MCP Server
 
 ```bash
-python -m server.main --data-path ./data/synthetic
+python clif_server.py --schema-path schema_config.json --data-path ./data/synthetic
+```
+
+For custom schemas:
+```bash
+python clif_server.py --schema-path your_schema.json --data-path ./your_data
 ```
 
 ### Using with Claude Desktop
@@ -58,7 +67,11 @@ python -m server.main --data-path ./data/synthetic
   "mcpServers": {
     "clif": {
       "command": "python",
-      "args": ["-m", "server.main", "--data-path", "/path/to/your/clif/data"],
+      "args": [
+        "clif_server.py",
+        "--schema-path", "schema_config.json",
+        "--data-path", "/path/to/your/data"
+      ],
       "cwd": "/path/to/clif-mcp-server"
     }
   }
@@ -69,9 +82,24 @@ python -m server.main --data-path ./data/synthetic
 
 ### Example Analyses
 
+#### First, explore your data
+```
+Show me the available tables and their structure
+```
+
+#### Validate the schema
+```
+Validate that the schema matches the actual data files
+```
+
 #### Building a Cohort
 ```
 Build a cohort of mechanically ventilated patients aged 18-65 with ICU stays > 3 days
+```
+
+#### Using Custom Filters
+```
+Build a cohort with custom filters: patients with creatinine > 2.0 in the labs table
 ```
 
 #### Analyzing Outcomes
@@ -79,28 +107,57 @@ Build a cohort of mechanically ventilated patients aged 18-65 with ICU stays > 3
 Analyze mortality and ICU length of stay for the ventilated cohort, stratified by age groups
 ```
 
-#### Comparing Cohorts
-```
-Compare outcomes between patients who received early vs late mechanical ventilation
-```
-
 #### Generating Code
 ```
-Generate Python code for the mortality analysis that can be run at other CLIF sites
+Generate Python code for the mortality analysis that can be run at other sites
 ```
 
-## Data Format
+## Schema Configuration
 
-The server expects CLIF 2.1.0 format CSV files:
-- `patient.csv`: Demographics
-- `hospitalization.csv`: Admission/discharge info
-- `adt.csv`: Location transfers
-- `vitals.csv`: Vital signs
-- `labs.csv`: Laboratory results
-- `respiratory_support.csv`: Ventilation data
-- `medication_administration.csv`: Medications
-- `patient_assessments.csv`: Clinical assessments
-- `position.csv`: Patient positioning
+The server uses a JSON schema file to understand your database structure. This allows it to work with any clinical database format.
+
+### Schema Format
+
+```json
+{
+  "name": "Your Schema Name",
+  "version": "1.0.0",
+  "tables": {
+    "table_name": {
+      "description": "What this table contains",
+      "file_pattern": "filename_pattern*.csv",
+      "primary_key": "id_column",
+      "foreign_keys": {
+        "fk_column": "referenced_table.column"
+      },
+      "columns": {
+        "column_name": {
+          "type": "string|integer|float|datetime",
+          "required": true,
+          "description": "Column description"
+        }
+      }
+    }
+  }
+}
+```
+
+### Default CLIF Schema
+
+The provided `schema_config.json` supports CLIF 2.1.0 format with tables for:
+- Patient demographics
+- Hospitalizations
+- ADT (transfers)
+- Vital signs
+- Laboratory results
+- Respiratory support
+- Medications
+- Clinical assessments
+- Patient positioning
+
+### Custom Schemas
+
+Create your own schema file to work with different database structures. See `examples/custom_schema_example.json` for a template.
 
 ## Multi-Site Validation
 

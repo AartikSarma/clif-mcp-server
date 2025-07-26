@@ -1,0 +1,117 @@
+{
+  "name": "Custom ICU Schema",
+  "version": "1.0.0",
+  "description": "Example custom schema for ICU data with different naming conventions",
+  "tables": {
+    "patients": {
+      "description": "Patient demographics with custom naming",
+      "file_pattern": "patients_*.csv",
+      "primary_key": "patient_id",
+      "columns": {
+        "patient_id": {"type": "string", "required": true},
+        "gender": {"type": "string", "required": false},
+        "age_at_admission": {"type": "integer", "required": false},
+        "ethnicity": {"type": "string", "required": false}
+      }
+    },
+    "admissions": {
+      "description": "Hospital admissions data",
+      "file_pattern": "admissions_*.csv",
+      "primary_key": "admission_id",
+      "foreign_keys": {"patient_id": "patients.patient_id"},
+      "columns": {
+        "admission_id": {"type": "string", "required": true},
+        "patient_id": {"type": "string", "required": true},
+        "admit_datetime": {"type": "datetime", "required": true},
+        "discharge_datetime": {"type": "datetime", "required": false},
+        "discharge_status": {"type": "string", "required": false}
+      }
+    },
+    "transfers": {
+      "description": "Unit transfer events",
+      "file_pattern": "transfers_*.csv",
+      "foreign_keys": {
+        "patient_id": "patients.patient_id",
+        "admission_id": "admissions.admission_id"
+      },
+      "columns": {
+        "patient_id": {"type": "string", "required": true},
+        "admission_id": {"type": "string", "required": true},
+        "unit": {"type": "string", "required": true},
+        "transfer_in": {"type": "datetime", "required": true},
+        "transfer_out": {"type": "datetime", "required": false}
+      }
+    },
+    "vital_signs": {
+      "description": "Vital signs measurements",
+      "file_pattern": "vitals_*.csv",
+      "foreign_keys": {
+        "patient_id": "patients.patient_id",
+        "admission_id": "admissions.admission_id"
+      },
+      "columns": {
+        "patient_id": {"type": "string", "required": true},
+        "admission_id": {"type": "string", "required": true},
+        "measurement_time": {"type": "datetime", "required": true},
+        "temp_celsius": {"type": "float", "required": false},
+        "heart_rate": {"type": "float", "required": false},
+        "resp_rate": {"type": "float", "required": false},
+        "bp_systolic": {"type": "float", "required": false},
+        "bp_diastolic": {"type": "float", "required": false},
+        "oxygen_sat": {"type": "float", "required": false}
+      }
+    },
+    "laboratory": {
+      "description": "Lab test results",
+      "file_pattern": "lab_results_*.csv",
+      "foreign_keys": {
+        "patient_id": "patients.patient_id",
+        "admission_id": "admissions.admission_id"
+      },
+      "columns": {
+        "patient_id": {"type": "string", "required": true},
+        "admission_id": {"type": "string", "required": true},
+        "test_datetime": {"type": "datetime", "required": true},
+        "test_code": {"type": "string", "required": true},
+        "test_name": {"type": "string", "required": true},
+        "result_value": {"type": "float", "required": false},
+        "result_unit": {"type": "string", "required": false},
+        "reference_range": {"type": "string", "required": false}
+      }
+    },
+    "ventilation": {
+      "description": "Mechanical ventilation records",
+      "file_pattern": "ventilation_*.csv",
+      "foreign_keys": {
+        "patient_id": "patients.patient_id",
+        "admission_id": "admissions.admission_id"
+      },
+      "columns": {
+        "patient_id": {"type": "string", "required": true},
+        "admission_id": {"type": "string", "required": true},
+        "vent_type": {"type": "string", "required": true},
+        "start_datetime": {"type": "datetime", "required": true},
+        "end_datetime": {"type": "datetime", "required": false},
+        "mode": {"type": "string", "required": false},
+        "settings": {"type": "string", "required": false}
+      }
+    },
+    "medications": {
+      "description": "Medication administration",
+      "file_pattern": "meds_admin_*.csv",
+      "foreign_keys": {
+        "patient_id": "patients.patient_id",
+        "admission_id": "admissions.admission_id"
+      },
+      "columns": {
+        "patient_id": {"type": "string", "required": true},
+        "admission_id": {"type": "string", "required": true},
+        "drug_name": {"type": "string", "required": true},
+        "admin_datetime": {"type": "datetime", "required": true},
+        "dose_amount": {"type": "float", "required": false},
+        "dose_unit": {"type": "string", "required": false},
+        "admin_route": {"type": "string", "required": false}
+      }
+    }
+  }
+}
