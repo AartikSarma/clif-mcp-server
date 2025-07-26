@@ -71,257 +71,213 @@ class CLIFServer:
         
     def _register_tools(self):
         """Register all available tools"""
-        
-        @app.tool()
-        async def explore_schema(table_name: str = None) -> str:
-            """
-            Explore available data tables and their structure.
-            
-            Args:
-                table_name: Optional specific table to explore in detail
-                
-            Returns:
-                Schema information and data statistics
-            """
-            try:
-                result = self.data_explorer.explore_schema(table_name)
-                return result
-            except Exception as e:
-                logger.error(f"Error exploring schema: {e}")
-                return f"Error: {str(e)}"
-        
-        @app.tool()
-        async def validate_schema() -> str:
-            """
-            Validate the schema configuration against actual data files.
-            
-            Returns:
-                Validation report with any issues found
-            """
-            try:
-                report = self.data_explorer.validate_schema()
-                return json.dumps(report, indent=2)
-            except Exception as e:
-                logger.error(f"Error validating schema: {e}")
-                return f"Error: {str(e)}"
-        
-        @app.tool()
-        async def build_cohort(criteria: str) -> str:
-            """
-            Build a patient cohort based on clinical criteria.
-            
-            Args:
-                criteria: JSON string with cohort criteria including:
-                    - age_range: {"min": 18, "max": 65}
-                    - icu_los_range: {"min": 3, "max": null}
-                    - require_mechanical_ventilation: true/false
-                    - medications: ["medication1", "medication2"]
-                    - lab_criteria: [{"test_name": "creatinine", "min_value": 2.0}]
-                    - custom_filters: [{"table": "labs", "column": "test_name", 
-                                      "operator": "contains", "value": "glucose"}]
-                    
-            Returns:
-                Cohort summary with privacy-preserved statistics
-            """
-            global current_cohort
-            
-            try:
-                criteria_dict = json.loads(criteria)
-                cohort, cohort_id = self.cohort_builder.build_cohort(criteria_dict)
-                
-                # Store for subsequent analyses
-                current_cohort = cohort
-                
-                # Privacy-preserved summary
-                summary = {
-                    "cohort_id": cohort_id,
-                    "size": len(cohort) if len(cohort) >= 10 else "<10 (suppressed)",
-                    "criteria": criteria_dict,
-                    "available_tables": list(self.schema_loader.discovered_files.keys())
-                }
-                
-                # Save cohort
-                cohort_file = self.cohort_builder.save_cohort(cohort, cohort_id, summary)
-                summary["saved_to"] = cohort_file
-                
-                return json.dumps(summary, indent=2)
-                
-            except Exception as e:
-                logger.error(f"Error building cohort: {e}")
-                return f"Error: {str(e)}"
-        
-        @app.tool()
-        async def analyze_outcomes(outcome_types: str = None) -> str:
-            """
-            Analyze clinical outcomes for the current cohort.
-            
-            Args:
-                outcome_types: Optional list of specific outcomes to analyze
-                
-            Returns:
-                Privacy-preserved outcome statistics
-            """
-            global current_cohort
-            
-            if current_cohort is None:
-                return "Error: No cohort loaded. Please build a cohort first."
-            
-            try:
-                if outcome_types:
-                    outcomes = json.loads(outcome_types)
-                else:
-                    outcomes = ["mortality", "icu_los", "hospital_los"]
-                
-                results = self.outcomes_analyzer.analyze_outcomes(current_cohort, outcomes)
-                
-                # Apply privacy preservation
-                protected_results = self.privacy_guard.protect_output(results)
-                
-                return json.dumps(protected_results, indent=2)
-                
-            except Exception as e:
-                logger.error(f"Error analyzing outcomes: {e}")
-                return f"Error: {str(e)}"
-        
-        @app.tool()
-        async def get_schema_info() -> str:
-            """
-            Get information about the current schema configuration.
-            
-            Returns:
-                Schema name, version, and available tables
-            """
-            try:
-                schema_info = {
-                    "name": self.schema_loader.schema.get('name', 'Unknown'),
-                    "version": self.schema_loader.schema.get('version', 'Unknown'),
-                    "description": self.schema_loader.schema.get('description', ''),
-                    "tables": {}
-                }
-                
-                for table_name in self.schema_loader.get_available_tables():
-                    table_info = self.schema_loader.get_table_info(table_name)
-                    schema_info["tables"][table_name] = {
-                        "description": table_info.get('description', ''),
-                        "file_pattern": table_info.get('file_pattern', ''),
-                        "files_found": len(self.schema_loader.discovered_files.get(table_name, [])),
-                        "columns_defined": len(table_info.get('columns', {}))
+        pass  # Tools are registered at module level
+
+
+@app.list_tools()
+async def list_available_tools() -> list[Tool]:
+    """List all available tools for the CLIF MCP server"""
+    return [
+        Tool(
+            name="explore_schema",
+            description="Explore available data tables and their structure",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "table_name": {
+                        "type": "string",
+                        "description": "Optional specific table to explore in detail"
                     }
-                
-                return json.dumps(schema_info, indent=2)
-                
-            except Exception as e:
-                logger.error(f"Error getting schema info: {e}")
-                return f"Error: {str(e)}"
-        
-        @app.tool()
-        async def get_column_values(table_name: str, column_name: str, limit: int = 20) -> str:
-            """
-            Get unique values and statistics for a specific column.
+                }
+            }
+        ),
+        Tool(
+            name="validate_schema",
+            description="Validate the schema configuration against actual data files",
+            inputSchema={"type": "object", "properties": {}}
+        ),
+        Tool(
+            name="build_cohort",
+            description="Build a patient cohort based on clinical criteria",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "criteria": {
+                        "type": "string",
+                        "description": "JSON string with cohort criteria"
+                    }
+                },
+                "required": ["criteria"]
+            }
+        ),
+        Tool(
+            name="analyze_outcomes",
+            description="Analyze clinical outcomes for the current cohort",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "outcome_types": {
+                        "type": "string",
+                        "description": "Optional list of specific outcomes to analyze"
+                    }
+                }
+            }
+        ),
+        Tool(
+            name="get_schema_info",
+            description="Get information about the current schema configuration",
+            inputSchema={"type": "object", "properties": {}}
+        ),
+        Tool(
+            name="get_column_values",
+            description="Get unique values and statistics for a specific column",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "table_name": {"type": "string", "description": "Name of the table"},
+                    "column_name": {"type": "string", "description": "Name of the column"},
+                    "limit": {"type": "integer", "description": "Maximum number of unique values to return"}
+                },
+                "required": ["table_name", "column_name"]
+            }
+        ),
+        Tool(
+            name="generate_analysis_code",
+            description="Generate reproducible analysis code",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "language": {"type": "string", "description": "Programming language (python or r)"},
+                    "target": {"type": "string", "description": "What to generate code for"}
+                }
+            }
+        )
+    ]
+
+
+# Global server instance (will be set in main)
+server_instance = None
+
+
+@app.call_tool()
+async def call_tool(name: str, arguments: dict) -> list[TextContent]:
+    """Handle tool calls"""
+    global server_instance, current_cohort
+    
+    if server_instance is None:
+        return [TextContent(type="text", text="Error: Server not initialized")]
+    
+    try:
+        if name == "explore_schema":
+            table_name = arguments.get("table_name")
+            result = server_instance.data_explorer.explore_schema(table_name)
+            return [TextContent(type="text", text=result)]
             
-            Args:
-                table_name: Name of the table
-                column_name: Name of the column
-                limit: Maximum number of unique values to return
-                
-            Returns:
-                Column statistics and top values
-            """
-            try:
-                result = self.data_explorer.get_column_values(table_name, column_name, limit)
-                return json.dumps(result, indent=2)
-            except Exception as e:
-                logger.error(f"Error getting column values: {e}")
-                return f"Error: {str(e)}"
-        
-        @app.tool()
-        async def generate_analysis_code(language: str = "python", target: str = "current_cohort") -> str:
-            """
-            Generate reproducible analysis code.
+        elif name == "validate_schema":
+            report = server_instance.data_explorer.validate_schema()
+            return [TextContent(type="text", text=json.dumps(report, indent=2))]
             
-            Args:
-                language: Programming language (python or r)
-                target: What to generate code for
-                
-            Returns:
-                Generated code as a string
-            """
-            global current_cohort
+        elif name == "build_cohort":
+            criteria_str = arguments.get("criteria", "{}")
+            criteria_dict = json.loads(criteria_str)
+            cohort, cohort_id = server_instance.cohort_builder.build_cohort(criteria_dict)
+            
+            # Store for subsequent analyses
+            current_cohort = cohort
+            
+            # Privacy-preserved summary
+            summary = {
+                "cohort_id": cohort_id,
+                "size": len(cohort) if len(cohort) >= 10 else "<10 (suppressed)",
+                "criteria": criteria_dict,
+                "available_tables": list(server_instance.schema_loader.discovered_files.keys())
+            }
+            
+            # Save cohort
+            cohort_file = server_instance.cohort_builder.save_cohort(cohort, cohort_id, summary)
+            summary["saved_to"] = cohort_file
+            
+            return [TextContent(type="text", text=json.dumps(summary, indent=2))]
+            
+        elif name == "analyze_outcomes":
+            if current_cohort is None:
+                return [TextContent(type="text", text="Error: No cohort loaded. Please build a cohort first.")]
+            
+            outcome_types_str = arguments.get("outcome_types")
+            if outcome_types_str:
+                outcomes = json.loads(outcome_types_str)
+            else:
+                outcomes = ["mortality", "icu_los", "hospital_los"]
+            
+            results = server_instance.outcomes_analyzer.analyze_outcomes(current_cohort, outcomes)
+            
+            # Apply privacy preservation
+            protected_results = server_instance.privacy_guard.protect_output(results)
+            
+            return [TextContent(type="text", text=json.dumps(protected_results, indent=2))]
+            
+        elif name == "get_schema_info":
+            schema_info = {
+                "name": server_instance.schema_loader.schema.get('name', 'Unknown'),
+                "version": server_instance.schema_loader.schema.get('version', 'Unknown'),
+                "description": server_instance.schema_loader.schema.get('description', ''),
+                "tables": {}
+            }
+            
+            for table_name in server_instance.schema_loader.get_available_tables():
+                table_info = server_instance.schema_loader.get_table_info(table_name)
+                schema_info["tables"][table_name] = {
+                    "description": table_info.get('description', ''),
+                    "file_pattern": table_info.get('file_pattern', ''),
+                    "files_found": len(server_instance.schema_loader.discovered_files.get(table_name, [])),
+                    "columns_defined": len(table_info.get('columns', {}))
+                }
+            
+            return [TextContent(type="text", text=json.dumps(schema_info, indent=2))]
+            
+        elif name == "get_column_values":
+            table_name = arguments.get("table_name")
+            column_name = arguments.get("column_name")
+            limit = arguments.get("limit", 20)
+            
+            result = server_instance.data_explorer.get_column_values(table_name, column_name, limit)
+            return [TextContent(type="text", text=json.dumps(result, indent=2))]
+            
+        elif name == "generate_analysis_code":
+            language = arguments.get("language", "python")
+            target = arguments.get("target", "current_cohort")
             
             if current_cohort is None and target == "current_cohort":
-                return "Error: No cohort loaded. Please build a cohort first."
+                return [TextContent(type="text", text="Error: No cohort loaded. Please build a cohort first.")]
             
-            try:
-                # Get schema information for code generation
-                schema_info = {
-                    "tables": self.schema_loader.get_available_tables(),
-                    "schema_name": self.schema_loader.schema.get('name', 'CLIF')
-                }
-                
-                code = self.code_generator.generate_code(
-                    analysis_type=target,
-                    language=language,
-                    cohort_criteria=getattr(current_cohort, 'criteria', {}),
-                    schema_info=schema_info
-                )
-                
-                return code
-                
-            except Exception as e:
-                logger.error(f"Error generating code: {e}")
-                return f"Error: {str(e)}"
-        
-        @app.tool()
-        async def create_derived_variable(variable_config: str) -> str:
-            """
-            Create a new derived variable based on existing data.
+            # Get schema information for code generation
+            schema_info = {
+                "tables": server_instance.schema_loader.get_available_tables(),
+                "schema_name": server_instance.schema_loader.schema.get('name', 'CLIF')
+            }
             
-            Args:
-                variable_config: JSON configuration for the derived variable
-                
-            Returns:
-                Summary of the created variable
-            """
-            try:
-                config = json.loads(variable_config)
-                result = self.variable_creator.create_variable(config)
-                return json.dumps(result, indent=2)
-            except Exception as e:
-                logger.error(f"Error creating derived variable: {e}")
-                return f"Error: {str(e)}"
-        
-        @app.tool()
-        async def build_ml_model(model_config: str) -> str:
-            """
-            Build a machine learning model for prediction.
+            code = server_instance.code_generator.generate_code(
+                analysis_type=target,
+                language=language,
+                cohort_criteria=getattr(current_cohort, 'criteria', {}),
+                schema_info=schema_info
+            )
             
-            Args:
-                model_config: JSON configuration for the model
-                
-            Returns:
-                Model performance metrics and summary
-            """
-            global current_cohort
+            return [TextContent(type="text", text=code)]
             
-            if current_cohort is None:
-                return "Error: No cohort loaded. Please build a cohort first."
+        else:
+            return [TextContent(type="text", text=f"Unknown tool: {name}")]
             
-            try:
-                config = json.loads(model_config)
-                result = self.ml_builder.build_model(current_cohort, config)
-                
-                # Apply privacy preservation
-                protected_result = self.privacy_guard.protect_output(result)
-                
-                return json.dumps(protected_result, indent=2)
-                
-            except Exception as e:
-                logger.error(f"Error building ML model: {e}")
-                return f"Error: {str(e)}"
+    except Exception as e:
+        import traceback
+        error_msg = f"Error in {name}: {str(e)}\n{traceback.format_exc()}"
+        return [TextContent(type="text", text=error_msg)]
 
 
 async def main():
     """Main entry point"""
+    global server_instance
+    
     parser = argparse.ArgumentParser(description='CLIF MCP Server with Dynamic Schema Support')
     parser.add_argument('--schema-path', required=True, help='Path to schema configuration JSON file')
     parser.add_argument('--data-path', required=True, help='Path to data directory')
@@ -330,12 +286,12 @@ async def main():
     
     try:
         # Initialize server
-        server = CLIFServer(args.schema_path, args.data_path)
+        server_instance = CLIFServer(args.schema_path, args.data_path)
         
         logger.info(f"Starting CLIF MCP Server")
         logger.info(f"Schema: {args.schema_path}")
         logger.info(f"Data: {args.data_path}")
-        logger.info(f"Discovered tables: {list(server.schema_loader.discovered_files.keys())}")
+        logger.info(f"Discovered tables: {list(server_instance.schema_loader.discovered_files.keys())}")
         
         # Run server
         async with stdio_server() as streams:

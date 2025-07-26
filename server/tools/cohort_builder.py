@@ -131,18 +131,25 @@ class CohortBuilder:
             return None
             
         # Parse datetime columns
-        time_cols = ['in_time', 'out_time']
+        time_cols = ['in_time', 'out_time', 'in_dttm', 'out_dttm']
         for col in time_cols:
             if col in adt.columns:
                 adt[col] = pd.to_datetime(adt[col], errors='coerce')
         
         # Filter for ICU locations
         icu_patterns = ['ICU', 'MICU', 'SICU', 'CCU', 'CVICU', 'NICU', 'PICU']
-        icu_mask = adt['location'].str.upper().str.contains('|'.join(icu_patterns), na=False)
-        icu_adt = adt[icu_mask]
+        location_col = 'location_category' if 'location_category' in adt.columns else 'location'
+        icu_mask = adt[location_col].str.upper().str.contains('|'.join(icu_patterns), na=False)
+        icu_adt = adt[icu_mask].copy()
         
-        # Calculate LOS
-        icu_adt['los_hours'] = (icu_adt['out_time'] - icu_adt['in_time']).dt.total_seconds() / 3600
+        # Calculate LOS using available time columns
+        out_col = 'out_dttm' if 'out_dttm' in icu_adt.columns else 'out_time'
+        in_col = 'in_dttm' if 'in_dttm' in icu_adt.columns else 'in_time'
+        
+        if out_col in icu_adt.columns and in_col in icu_adt.columns:
+            icu_adt['los_hours'] = (icu_adt[out_col] - icu_adt[in_col]).dt.total_seconds() / 3600
+        else:
+            return None
         
         # Aggregate by hospitalization
         id_col = 'hospitalization_id' if 'hospitalization_id' in icu_adt.columns else 'patient_id'

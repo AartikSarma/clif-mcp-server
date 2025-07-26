@@ -8,11 +8,11 @@ import sys
 from pathlib import Path
 
 # Add parent directory to path
-sys.path.append(str(Path(__file__).parent))
+sys.path.append(str(Path(__file__).parent.parent))
 
 from server.tools.schema_loader import SchemaLoader
-from server.tools.cohort_builder_dynamic import DynamicCohortBuilder
-from server.tools.data_explorer_dynamic import DynamicDataExplorer
+from server.tools.cohort_builder import CohortBuilder
+from server.tools.data_explorer import DataExplorer
 
 
 def test_schema_loader():
@@ -63,7 +63,7 @@ def test_dynamic_cohort_builder():
     schema_path = "schema_config.json"
     data_path = "./data/synthetic"
     
-    builder = DynamicCohortBuilder(schema_path, data_path)
+    builder = CohortBuilder(schema_path, data_path)
     
     # Build a simple cohort
     criteria = {
@@ -112,7 +112,7 @@ def test_dynamic_data_explorer():
     schema_path = "schema_config.json"
     data_path = "./data/synthetic"
     
-    explorer = DynamicDataExplorer(schema_path, data_path)
+    explorer = DataExplorer(schema_path, data_path)
     
     # Explore all tables
     print("\n1. Exploring all tables:")

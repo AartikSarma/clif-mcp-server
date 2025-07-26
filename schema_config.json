@@ -5,116 +5,112 @@
   "tables": {
     "patient": {
       "description": "Patient demographics and basic information",
-      "file_pattern": "patient*.csv",
+      "file_pattern": "patient.csv",
       "primary_key": "patient_id",
       "columns": {
         "patient_id": {"type": "string", "required": true, "description": "Unique patient identifier"},
         "sex": {"type": "string", "required": false, "description": "Patient sex"},
-        "anchor_age": {"type": "integer", "required": false, "description": "Age at anchor time"},
-        "race_ethnicity": {"type": "string", "required": false, "description": "Race and ethnicity"}
+        "race": {"type": "string", "required": false, "description": "Patient race"},
+        "ethnicity": {"type": "string", "required": false, "description": "Patient ethnicity"},
+        "date_of_birth": {"type": "string", "required": false, "description": "Date of birth"}
       }
     },
     "hospitalization": {
       "description": "Hospital admission and discharge information",
-      "file_pattern": "hospitalization*.csv",
+      "file_pattern": "hospitalization.csv",
       "primary_key": "hospitalization_id",
       "foreign_keys": {"patient_id": "patient.patient_id"},
       "columns": {
         "hospitalization_id": {"type": "string", "required": true},
         "patient_id": {"type": "string", "required": true},
-        "admission_time": {"type": "datetime", "required": true},
-        "discharge_time": {"type": "datetime", "required": false},
-        "discharge_disposition": {"type": "string", "required": false}
+        "admission_dttm": {"type": "datetime", "required": true},
+        "discharge_dttm": {"type": "datetime", "required": false},
+        "admission_source": {"type": "string", "required": false},
+        "discharge_disposition": {"type": "string", "required": false},
+        "age_at_admission": {"type": "integer", "required": false}
       }
     },
     "adt": {
       "description": "Admission, discharge, and transfer events",
-      "file_pattern": "adt*.csv",
-      "foreign_keys": {"patient_id": "patient.patient_id", "hospitalization_id": "hospitalization.hospitalization_id"},
+      "file_pattern": "adt.csv",
+      "foreign_keys": {"hospitalization_id": "hospitalization.hospitalization_id"},
       "columns": {
-        "patient_id": {"type": "string", "required": true},
         "hospitalization_id": {"type": "string", "required": true},
-        "location": {"type": "string", "required": true},
-        "in_time": {"type": "datetime", "required": true},
-        "out_time": {"type": "datetime", "required": false}
+        "in_dttm": {"type": "datetime", "required": true},
+        "out_dttm": {"type": "datetime", "required": false},
+        "location_category": {"type": "string", "required": true}
       }
     },
     "vitals": {
       "description": "Vital signs measurements",
-      "file_pattern": "vitals*.csv",
-      "foreign_keys": {"patient_id": "patient.patient_id", "hospitalization_id": "hospitalization.hospitalization_id"},
+      "file_pattern": "vitals.csv",
+      "foreign_keys": {"hospitalization_id": "hospitalization.hospitalization_id"},
       "columns": {
-        "patient_id": {"type": "string", "required": true},
         "hospitalization_id": {"type": "string", "required": true},
-        "vital_time": {"type": "datetime", "required": true},
-        "temperature": {"type": "float", "required": false},
-        "heart_rate": {"type": "float", "required": false},
-        "respiratory_rate": {"type": "float", "required": false},
-        "sbp": {"type": "float", "required": false, "description": "Systolic blood pressure"},
-        "dbp": {"type": "float", "required": false, "description": "Diastolic blood pressure"},
-        "spo2": {"type": "float", "required": false, "description": "Oxygen saturation"}
+        "vital_dttm": {"type": "datetime", "required": true},
+        "vital_name": {"type": "string", "required": true},
+        "vital_value": {"type": "float", "required": false}
       }
     },
     "labs": {
       "description": "Laboratory test results",
-      "file_pattern": "labs*.csv",
-      "foreign_keys": {"patient_id": "patient.patient_id", "hospitalization_id": "hospitalization.hospitalization_id"},
+      "file_pattern": "labs.csv",
+      "foreign_keys": {"hospitalization_id": "hospitalization.hospitalization_id"},
       "columns": {
-        "patient_id": {"type": "string", "required": true},
         "hospitalization_id": {"type": "string", "required": true},
-        "lab_time": {"type": "datetime", "required": true},
+        "lab_dttm": {"type": "datetime", "required": true},
         "test_name": {"type": "string", "required": true},
         "test_result": {"type": "float", "required": false},
-        "test_units": {"type": "string", "required": false}
+        "test_units": {"type": "string", "required": false},
+        "reference_range": {"type": "string", "required": false}
       }
     },
     "respiratory_support": {
       "description": "Mechanical ventilation and respiratory support",
-      "file_pattern": "respiratory_support*.csv",
-      "foreign_keys": {"patient_id": "patient.patient_id", "hospitalization_id": "hospitalization.hospitalization_id"},
+      "file_pattern": "respiratory_support.csv",
+      "foreign_keys": {"hospitalization_id": "hospitalization.hospitalization_id"},
       "columns": {
-        "patient_id": {"type": "string", "required": true},
         "hospitalization_id": {"type": "string", "required": true},
         "device": {"type": "string", "required": true},
-        "vent_start": {"type": "datetime", "required": true},
-        "vent_stop": {"type": "datetime", "required": false}
+        "vent_start_dttm": {"type": "datetime", "required": true},
+        "vent_stop_dttm": {"type": "datetime", "required": false},
+        "support_category": {"type": "string", "required": false}
       }
     },
     "medication_administration": {
       "description": "Medication administration records",
-      "file_pattern": "medication_administration*.csv",
-      "foreign_keys": {"patient_id": "patient.patient_id", "hospitalization_id": "hospitalization.hospitalization_id"},
+      "file_pattern": "medication_administration.csv",
+      "foreign_keys": {"hospitalization_id": "hospitalization.hospitalization_id"},
       "columns": {
-        "patient_id": {"type": "string", "required": true},
         "hospitalization_id": {"type": "string", "required": true},
         "medication": {"type": "string", "required": true},
-        "admin_time": {"type": "datetime", "required": true},
+        "admin_dttm": {"type": "datetime", "required": true},
         "dose": {"type": "float", "required": false},
         "dose_units": {"type": "string", "required": false},
-        "route": {"type": "string", "required": false}
+        "route": {"type": "string", "required": false},
+        "frequency": {"type": "string", "required": false}
       }
     },
     "patient_assessments": {
       "description": "Clinical assessment scores",
-      "file_pattern": "patient_assessments*.csv",
-      "foreign_keys": {"patient_id": "patient.patient_id", "hospitalization_id": "hospitalization.hospitalization_id"},
+      "file_pattern": "patient_assessments.csv",
+      "foreign_keys": {"hospitalization_id": "hospitalization.hospitalization_id"},
       "columns": {
-        "patient_id": {"type": "string", "required": true},
         "hospitalization_id": {"type": "string", "required": true},
-        "assessment_time": {"type": "datetime", "required": true},
-        "assessment_name": {"type": "string", "required": true},
+        "assessment_dttm": {"type": "datetime", "required": true},
+        "assessment_category": {"type": "string", "required": true},
         "assessment_value": {"type": "float", "required": false}
       }
     },
     "position": {
       "description": "Patient positioning data",
-      "file_pattern": "position*.csv",
-      "foreign_keys": {"patient_id": "patient.patient_id", "hospitalization_id": "hospitalization.hospitalization_id"},
+      "file_pattern": "position.csv",
+      "foreign_keys": {"hospitalization_id": "hospitalization.hospitalization_id"},
       "columns": {
-        "patient_id": {"type": "string", "required": true},
         "hospitalization_id": {"type": "string", "required": true},
-        "position_time": {"type": "datetime", "required": true},
-        "position": {"type": "string", "required": true}
+        "position_dttm": {"type": "datetime", "required": true},
+        "position": {"type": "string", "required": true},
+        "position_category": {"type": "string", "required": false}
       }
     }
   }
